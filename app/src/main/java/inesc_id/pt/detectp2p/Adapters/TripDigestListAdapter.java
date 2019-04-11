@@ -1,22 +1,36 @@
 package inesc_id.pt.detectp2p.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import inesc_id.pt.detectp2p.R;
 import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripDigest;
+import inesc_id.pt.detectp2p.Utils.DateHelper;
+import inesc_id.pt.detectp2p.Utils.LocationUtils;
 
 public class TripDigestListAdapter extends BaseAdapter {
 
     ArrayList<FullTripDigest> tripDigestArrayList = new ArrayList<>();
     Context context;
+
+    static class ViewHolder {
+
+        private TextView tvStartAddr;
+        private TextView tvEndAddr;
+        private TextView tvStartTS;
+        private TextView tvEndTS;
+
+    }
 
     public TripDigestListAdapter(Context context, ArrayList<FullTripDigest> dataset){
         this.context = context;
@@ -40,19 +54,49 @@ public class TripDigestListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View rowView = inflater.inflate(R.layout.trip_digest_item, null, true);
 
+        ViewHolder mViewHolder = null;
         FullTripDigest data = tripDigestArrayList.get(i);
 
-        TextView tvStartAddr = (TextView) rowView.findViewById(R.id.tvStartAddr);
-        TextView tvEndAddr = (TextView) rowView.findViewById(R.id.tvEndAddr);
-        TextView tvTimestamp = (TextView) rowView.findViewById(R.id.tvTimestamp);
+        if(view == null) {
 
-        tvStartAddr.setText(data.getStartAddress());
-        tvEndAddr.setText(data.getFinalAddress());
-        tvTimestamp.setText("" + data.getInitTimestamp());
+            mViewHolder = new ViewHolder();
 
-        return rowView;
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.trip_digest_item, null, true);
+
+            mViewHolder.tvStartAddr = view.findViewById(R.id.tvStartAddr);
+            mViewHolder.tvEndAddr = view.findViewById(R.id.tvEndAddr);
+            mViewHolder.tvStartTS = view.findViewById(R.id.tvStartTS);
+            mViewHolder.tvEndTS = view.findViewById(R.id.tvEndTS);
+
+            view.setTag(mViewHolder);
+        }
+        else{
+            mViewHolder = (ViewHolder) view.getTag();
+        }
+
+        // GET START/END ADDRESSES / LOCATION
+        if (data.getStartAddress() != null){
+            mViewHolder.tvStartAddr.setText(data.getStartAddress());
+        }else{
+            mViewHolder.tvStartAddr.setText(LocationUtils.getTextLatLng(data.getStartLocation()));
+        }
+
+        if (data.getFinalAddress() != null){
+            mViewHolder.tvEndAddr.setText(data.getFinalAddress());
+        }else{
+            mViewHolder.tvEndAddr.setText(LocationUtils.getTextLatLng(data.getFinalLocation()));
+        }
+
+        mViewHolder.tvStartTS.setText(DateHelper.getHoursMinutesFromTSString(data.getInitTimestamp()));
+        mViewHolder.tvEndTS.setText(DateHelper.getHoursMinutesFromTSString(data.getEndTimestamp()));
+
+        Log.d("TripAdapter", "Start addr" + data.getStartAddress());
+        Log.d("TripAdapter", "End addr" + data.getFinalAddress());
+        Log.d("TripAdapter", "Start TS" + data.getEndTimestamp());
+        Log.d("TripAdapter", "End TS" + data.getEndTimestamp());
+
+        return view;
     }
 }

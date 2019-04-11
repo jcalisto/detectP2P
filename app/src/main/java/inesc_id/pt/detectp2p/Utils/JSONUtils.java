@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripPart;
 import inesc_id.pt.detectp2p.TripStateMachine.dataML.Trip;
+import inesc_id.pt.detectp2p.TripStateMachine.dataML.WaitingEvent;
 
 /**
  * Created by Duarte on 14/03/2018.
@@ -33,13 +34,15 @@ public class JSONUtils {
         //builder.registerTypeAdapter(AtomicInteger.class, new AtomicIntegerTypeAdapter());
         RuntimeTypeAdapterFactory<FullTripPart> adapter = RuntimeTypeAdapterFactory
                 .of(FullTripPart.class)
-                .registerSubtype(Trip.class);
-
+                .registerSubtype(Trip.class)
+                .registerSubtype(WaitingEvent.class);
 
         builder.registerTypeAdapterFactory(adapter);
 
         builder.setPrettyPrinting().excludeFieldsWithoutExposeAnnotation();
         builder.serializeSpecialFloatingPointValues();
+
+        gson = builder.create();
     }
 
 

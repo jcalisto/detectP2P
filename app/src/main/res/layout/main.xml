@@ -16,7 +16,7 @@
     <ListView
         android:id="@+id/tripsList"
         android:layout_width="match_parent"
-        android:layout_height="550dp"
+        android:layout_height="300dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp" />
@@ -26,5 +26,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Button" />
+        android:text="Connect To Peers" />
+
+    <Button
+        android:id="@+id/btStartStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Trip" />
+
+    <Button
+        android:id="@+id/btRedraw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Redraw " />
+
+    <Button
+        android:id="@+id/btLog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LOG TO FILE" />
 </LinearLayout>

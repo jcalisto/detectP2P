@@ -100,6 +100,7 @@ public class FullTrip implements Serializable{
 
 
 
+
     public String getDescription(){
 
         StringBuilder sb = new StringBuilder();

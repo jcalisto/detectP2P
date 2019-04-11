@@ -445,7 +445,6 @@ public class TripStateMachine {
 
     public synchronized void insertLocationUpdate(LocationDataContainer locationDataContainer, boolean fromAlarm) {
         Log.d(TAG, "Receiving location in trip state machine");
-
         synchronized (lockStateMachine) {
 
             if(lastInsertedLocationTS == 0){
@@ -461,22 +460,11 @@ public class TripStateMachine {
 
             }
 
-        /*if(currentToBeCompared!= null) {
-            Log.e("distance between", LocationUtils.meterDistanceBetweenTwoLocations(locationDataContainer, currentToBeCompared) + "");
-            Log.e("time between", locationDataContainer.getSysTimestamp() - currentToBeCompared.getSysTimestamp() + "");
-            Log.e("current pos", currentToBeCompared.getLatitude() + " " +  currentToBeCompared.getLongitude() + "");
-            Log.e("ldc pos", locationDataContainer.getLatitude() + " " +  locationDataContainer.getLongitude() + "");
-        }*/
-
             if ((locationDataContainer.getAccuracy() > 100) && (currentState == state.still)) {
-
                 Log.d(TAG, "Still - Low accuracy - location discarded");
                 return;
-
             }
 
-//            todo 17.0.1
-//            if ((locationDataContainer.getAccuracy() > 200) && (currentState != state.still)) {
             if ((locationDataContainer.getAccuracy() > 150) && (currentState != state.still)) {
 
                 Log.d(TAG, "In leg/waiting event - Low accuracy - location discarded");
@@ -484,36 +472,10 @@ public class TripStateMachine {
 
             }
 
-
-//            if(fromAlarm){
-//                Log.d(TAG,"Location from GPS - KeepAwakeAlarm");
-//                if((locationDataContainer.getLocTimestamp() - lastValidLocationTS) > 1000*60*3){
-//                    //3 minutes have passed since the last valid location
-//                    //let's accept this location that came from the KeepAwakeAlarm
-//                    Log.d(TAG,"3 minutes have passed since the last valid location let's accept this location that came from the KeepAwakeAlarm");
-//                }else{
-//                    //last accepted location is fresh - less than three minutes - discard this one
-//                    Log.d(TAG,"last accepted location is fresh - less than three minutes - discard this one");
-//                    return;
-//                }
-//            }
-
-//            //TODO-SUSPECT : 0.16.7.99 ???
-//            lastLocationReceivedTimestamp = lastValidLocationTS;
-//            //TODO-SUSPECT : 0.16.7.99 --END
-
-
-
             // if it gets here it means that the location is accepted
             lastValidLocationTS = locationDataContainer.getSysTimestamp();
 
             long ts = locationDataContainer.getSysTimestamp();
-
-//            //TODO-SUSPECT : 0.16.7.99 ???
-//            if (lastLocationReceivedTimestamp==0) lastLocationReceivedTimestamp=ts;
-//            //TODO-SUSPECT : 0.16.7.99 --END
-
-
 
             if (currentState != state.still) {
 
@@ -592,16 +554,6 @@ public class TripStateMachine {
                             }
 
                             currentListOfLocations.addAll(toBeAdded);
-
-
-                            // todo moved from !!
-                            // todo add locations to raw data pre processing right?
-//                            for (LocationDataContainer lcd : currentListOfLocations){
-//                                rawDataPreProcessing.insertLocation(lcd);
-//
-//                                Log.d(TAG, "Inserting location "+ lcd.getLatLng().toString() + " in classifier with from " + DateHelper.getDateFromTSString(lcd.getSysTimestamp()));
-//
-//                            }
 
                             //  if no location was appended to the trip that has just started,
                             // it means we have to add the last location

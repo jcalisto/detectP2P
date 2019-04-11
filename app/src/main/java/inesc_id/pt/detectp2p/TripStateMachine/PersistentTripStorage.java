@@ -16,8 +16,10 @@ import org.joda.time.DateTime;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
@@ -115,37 +117,20 @@ public class PersistentTripStorage {
     }
     */
 
-//    public FullTrip getFullTripByDate(String date) {
-//
-//        //see https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor
-//
-//        FullTrip resultSet = null;
-//
-////        try (Cursor cursor = tripStorageDBHelper.getFullTripByDate(date)) {
-////
-////                cursor.moveToFirst();
-////
-////                Gson gson = JSONUtils.getInstance().getGson();
-////                resultSet = gson.fromJson(cursor.getString(1), FullTrip.class);
-////
-////            }
-//
-//        //read from object directly
-////        long currentTS = new DateTime(UTC).getMillis();
-////        Log.d("Persistence", "Started reading at: " + currentTS );
-////        resultSet = readFullTripFromDisk(date);
-////        Log.d("Persistence", "Stopped reading - Time Elapsed= " + (new DateTime(UTC).getMillis() - currentTS));
-//
-//        //read from json
-//        long currentTS = new DateTime(UTC).getMillis();
-//        Log.d("Persistence", "Started reading at: " + currentTS );
-//        resultSet = readFullTripFromDiskWithJSON(date);
-//        Log.d("Persistence", "Stopped reading - Time Elapsed= " + (new DateTime(UTC).getMillis() - currentTS));
-//
-//
-//
-//        return  resultSet;
-//    }
+    public FullTrip getFullTripByDate(String date) {
+
+        FullTrip resultSet = null;
+
+        //read from json
+        long currentTS = new DateTime(UTC).getMillis();
+        Log.d("Persistence", "Started reading at: " + currentTS );
+        resultSet = readFullTripFromDiskWithJSON(date);
+        Log.d("Persistence", "Stopped reading - Time Elapsed= " + (new DateTime(UTC).getMillis() - currentTS));
+
+
+
+        return  resultSet;
+    }
 //
 //    public boolean deleteFullTripByDate(String tripID){
 //
@@ -195,6 +180,7 @@ public class PersistentTripStorage {
 
 
     public boolean insertFullTripObject(FullTrip fullTrip) {
+
 
         long currentTS = new DateTime(UTC).getMillis();
         Log.d("Persistence", "Started writing at: " + currentTS );
@@ -256,6 +242,10 @@ public class PersistentTripStorage {
 
     public boolean writeFullTripToDiskWithJSON(FullTrip fullTrip){
         try {
+            Log.d(TAG, "Writing Trip to Disk with ID= " + fullTrip.getDateId());
+            Log.d(TAG, "DESCRIPTION: " +  fullTrip.getDescription());
+
+            Log.d(TAG, "Number of trips: " + fullTrip.getTripList().size());
 
             Gson gson = JSONUtils.getInstance().getGson();
             String fulltripjson = gson.toJson(fullTrip, FullTrip.class);
@@ -265,6 +255,7 @@ public class PersistentTripStorage {
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             // write object to file
 
+            Log.d(TAG, "TRIP AS JSON STRING: " + fulltripjson);
             oos.writeObject(fulltripjson);
 
             System.out.println("Done");
@@ -316,46 +307,30 @@ public class PersistentTripStorage {
 //
 //    }
 
-//    public FullTrip readFullTripFromDiskWithJSON(String tripID){
-//
-////        Gson gson = JSONUtils.getInstance().getGson();
-////
-////        try (InputStream fileIn = context.openFileInput(tripID);
-////             BufferedInputStream bufferedIn = new BufferedInputStream(fileIn);
-////             Reader reader = new InputStreamReader(bufferedIn, StandardCharsets.UTF_8)) {
-////             FullTrip result = gson.fromJson(reader, FullTrip.class);
-////
-//////            FullTrip result = (FullTrip) ToStringSample.stringToObject(reader.toString());
-//////            resultSet.add(result);
-////
-////             return result;
-////
-////        } catch (IOException e) {
-////            e.printStackTrace();
-////            return null;
-////        }
-//
-//        String filePath = context.getFilesDir().getPath()  + "/" + tripID;
-//
-//        FileInputStream is = null;
-//        try {
-//            is = new FileInputStream(filePath);
-//            ObjectInputStream ois = new ObjectInputStream(is);
-//            String emp = (String) ois.readObject();
-//            ois.close();
-//            is.close();
-//
-//            Gson gson = JSONUtils.getInstance().getGson();
-//            FullTrip fullTrip = gson.fromJson(emp, FullTrip.class);
-//
-//            return fullTrip;
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//
-//    }
+    public FullTrip readFullTripFromDiskWithJSON(String tripID){
+        Log.d(TAG, "Reading Trip from Disk with ID= " + tripID);
+
+        String filePath = context.getFilesDir().getPath()  + "/" + tripID;
+
+        FileInputStream is = null;
+        try {
+            is = new FileInputStream(filePath);
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String emp = (String) ois.readObject();
+            ois.close();
+            is.close();
+
+            Gson gson = JSONUtils.getInstance().getGson();
+            FullTrip fullTrip = gson.fromJson(emp, FullTrip.class);
+
+            return fullTrip;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
 
 
     public boolean insertLocationObject(LocationDataContainer location) {

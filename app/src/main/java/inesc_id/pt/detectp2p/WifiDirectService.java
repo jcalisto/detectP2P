@@ -89,6 +89,8 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
         Log.d("WIFI-SERVICE", "Service Destroyed");
     }
 
+
+
     public void updatePeers(){
         Log.d("WIFI-SERVICE", "Request Peer Update");
         if(mBound)
@@ -146,7 +148,8 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
-            mManager = new SimWifiP2pManager(new Messenger(service));
+            mService = new Messenger(service);
+            mManager = new SimWifiP2pManager(mService);
             mChannel = mManager.initialize(getApplication(), getMainLooper(),
                     null);
             mBound = true;
@@ -154,6 +157,7 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+            mService = null;
             mManager = null;
             mChannel = null;
             mBound = false;
@@ -166,18 +170,6 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
     public IBinder onBind(Intent intent) {
         return null;
     }
-
-
-    public String getMyName() {
-        return myName;
-    }
-
-    public void setMyName(String myName) {
-        this.myName = myName;
-    }
-
-
-
 
 
     ///////////////////// COMMUNICATION TASKS //////////////////

@@ -186,8 +186,7 @@ public class ActivityRecognitionService extends Service implements GoogleApiClie
 
                             if(meanAccel > keys.MIN_ACCEL){
 
-                                //Log.d(TAG,"accels", "Mean acceleration in the last 10 seconds > 3.0 -> ACTIVATING GPS");
-
+                                Log.d(TAG,"Mean acceleration in the last 10 seconds > 3.0 -> ACTIVATING GPS");
 
                                 LocationRequest a = buildHighAccuracyAfterMovementRequest();
 
@@ -446,6 +445,7 @@ public class ActivityRecognitionService extends Service implements GoogleApiClie
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
+            Log.d(TAG, "Start onLocationResult");
             for (Location location : locationResult.getLocations()) {
 
                 LocationDataContainer received = new LocationDataContainer(
@@ -499,7 +499,6 @@ public class ActivityRecognitionService extends Service implements GoogleApiClie
         mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(0);
 
-        //mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         Log.d(TAG,"Building high accuracy location request");
