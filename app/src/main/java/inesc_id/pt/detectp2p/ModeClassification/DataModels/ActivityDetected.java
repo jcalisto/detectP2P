@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.DataModels;
+package inesc_id.pt.detectp2p.ModeClassification.DataModels;
 
 import com.google.gson.annotations.Expose;
 

@@ -28,13 +28,13 @@ import java.util.List;
 import inesc_id.pt.detectp2p.ModeClassification.ActivityRecognitionService;
 import inesc_id.pt.detectp2p.Adapters.LegValidationAdapter;
 import inesc_id.pt.detectp2p.Adapters.TripDigestListAdapter;
-import inesc_id.pt.detectp2p.P2pBroadcastReceiver;
+import inesc_id.pt.detectp2p.P2PNetwork.P2pBroadcastReceiver;
 import inesc_id.pt.detectp2p.R;
 import inesc_id.pt.detectp2p.ModeClassification.PersistentTripStorage;
 import inesc_id.pt.detectp2p.ModeClassification.TripStateMachine;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
-import inesc_id.pt.detectp2p.WifiDirectService;
+import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectService;
 
 public class MainActivity extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();

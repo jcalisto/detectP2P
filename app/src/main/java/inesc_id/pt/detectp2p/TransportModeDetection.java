@@ -3,7 +3,7 @@ package inesc_id.pt.detectp2p;
 import java.util.HashMap;
 import java.util.Map;
 
-import inesc_id.pt.detectp2p.DataModels.PeerInfo;
+import inesc_id.pt.detectp2p.P2PNetwork.DataModels.PeerInfo;
 
 public class TransportModeDetection {
 

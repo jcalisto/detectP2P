@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p;
+package inesc_id.pt.detectp2p.P2PNetwork;
 
 import android.app.Service;
 import android.content.ComponentName;
@@ -16,7 +16,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

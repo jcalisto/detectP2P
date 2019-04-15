@@ -9,8 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import inesc_id.pt.detectp2p.DataModels.AccelerationData;
-import inesc_id.pt.detectp2p.DataModels.ActivityDetected;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.AccelerationData;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDetected;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.CheckMergesResult;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripPart;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.KeyValueWrapper;

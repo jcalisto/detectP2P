@@ -14,9 +14,9 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import inesc_id.pt.detectp2p.BuildConfig;
-import inesc_id.pt.detectp2p.DataModels.AccelerationData;
-import inesc_id.pt.detectp2p.DataModels.ActivityDataContainer;
-import inesc_id.pt.detectp2p.DataModels.ActivityDetected;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.AccelerationData;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDetected;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripPart;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;

@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.DataModels;
+package inesc_id.pt.detectp2p.P2PNetwork.DataModels;
 
 import java.util.HashMap;
 import java.util.List;

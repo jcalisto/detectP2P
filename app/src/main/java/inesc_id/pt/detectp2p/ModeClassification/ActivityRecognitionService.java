@@ -35,9 +35,9 @@ import java.util.LinkedList;
 import android.os.Handler;
 import android.util.Log;
 
-import inesc_id.pt.detectp2p.DataModels.AccelerationData;
-import inesc_id.pt.detectp2p.DataModels.ActivityDataContainer;
-import inesc_id.pt.detectp2p.DataModels.ActivityDetected;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.AccelerationData;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDetected;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
 

@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import inesc_id.pt.detectp2p.DataModels.AccelerationData;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.AccelerationData;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLAlgorithmInput;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;

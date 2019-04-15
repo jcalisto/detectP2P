@@ -1,6 +1,8 @@
-package inesc_id.pt.detectp2p.DataModels;
+package inesc_id.pt.detectp2p.P2PNetwork.DataModels;
 
 import java.util.Map;
+
+import inesc_id.pt.detectp2p.P2PNetwork.DataModels.ModeInfo;
 
 public class PeerInfo {
 

@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import inesc_id.pt.detectp2p.DataModels.ActivityDetected;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDetected;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLAlgorithmInput;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
 

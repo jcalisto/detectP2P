@@ -7,9 +7,9 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import inesc_id.pt.detectp2p.DataModels.AccelerationData;
-import inesc_id.pt.detectp2p.DataModels.ActivityDataContainer;
-import inesc_id.pt.detectp2p.DataModels.ActivityDetected;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.AccelerationData;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDetected;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
 
 /**

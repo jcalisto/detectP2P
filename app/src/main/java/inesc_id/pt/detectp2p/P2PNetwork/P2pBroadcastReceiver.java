@@ -1,13 +1,8 @@
-package inesc_id.pt.detectp2p;
+package inesc_id.pt.detectp2p.P2PNetwork;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
-import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.WifiP2pManager.*;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
