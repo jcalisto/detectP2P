@@ -3,9 +3,9 @@ package inesc_id.pt.detectp2p.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripPart;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.Trip;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.WaitingEvent;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripPart;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.Trip;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.WaitingEvent;
 
 /**
  * Created by Duarte on 14/03/2018.

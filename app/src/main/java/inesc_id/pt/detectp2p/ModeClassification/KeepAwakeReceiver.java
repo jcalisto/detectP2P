@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.TripStateMachine;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,7 +14,7 @@ import com.google.android.gms.location.LocationServices;
 
 import org.joda.time.DateTime;
 
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
 
 import static org.joda.time.DateTimeZone.UTC;

@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.TripStateMachine;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import java.util.Collections;
 import java.util.Comparator;

@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.TripStateMachine;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.content.Context;
 
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 import inesc_id.pt.detectp2p.DataModels.AccelerationData;
 import inesc_id.pt.detectp2p.DataModels.ActivityDataContainer;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripPart;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripPart;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
 
 /**
  * Created by Duarte on 20/02/2018.

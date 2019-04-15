@@ -1,8 +1,7 @@
-package inesc_id.pt.detectp2p.TripStateMachine;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -10,7 +9,6 @@ import android.widget.Toast;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -19,13 +17,13 @@ import inesc_id.pt.detectp2p.BuildConfig;
 import inesc_id.pt.detectp2p.DataModels.AccelerationData;
 import inesc_id.pt.detectp2p.DataModels.ActivityDataContainer;
 import inesc_id.pt.detectp2p.DataModels.ActivityDetected;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTrip;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripPart;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.LocationDataContainer;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.OngoingTripWrapper;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.SpeedDistanceWrapper;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.Trip;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.WaitingEvent;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripPart;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.OngoingTripWrapper;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.SpeedDistanceWrapper;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.Trip;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.WaitingEvent;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
 import inesc_id.pt.detectp2p.Utils.LocationUtils;
 import inesc_id.pt.detectp2p.Utils.MiscUtils;

@@ -1,25 +1,20 @@
 package inesc_id.pt.detectp2p.Adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import inesc_id.pt.detectp2p.R;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTrip;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripDigest;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripPart;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.Trip;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripPart;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.Trip;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
-import inesc_id.pt.detectp2p.Utils.LocationUtils;
 import inesc_id.pt.detectp2p.Utils.TransportInfo;
 
 

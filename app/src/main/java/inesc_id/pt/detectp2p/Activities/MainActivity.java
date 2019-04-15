@@ -1,15 +1,10 @@
 package inesc_id.pt.detectp2p.Activities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.wifi.WpsInfo;
-import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.*;
 import android.os.Bundle;
@@ -21,9 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,15 +25,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import inesc_id.pt.detectp2p.ActivityRecognitionService;
+import inesc_id.pt.detectp2p.ModeClassification.ActivityRecognitionService;
 import inesc_id.pt.detectp2p.Adapters.LegValidationAdapter;
 import inesc_id.pt.detectp2p.Adapters.TripDigestListAdapter;
 import inesc_id.pt.detectp2p.P2pBroadcastReceiver;
 import inesc_id.pt.detectp2p.R;
-import inesc_id.pt.detectp2p.TripStateMachine.PersistentTripStorage;
-import inesc_id.pt.detectp2p.TripStateMachine.TripStateMachine;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTrip;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripDigest;
+import inesc_id.pt.detectp2p.ModeClassification.PersistentTripStorage;
+import inesc_id.pt.detectp2p.ModeClassification.TripStateMachine;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
 import inesc_id.pt.detectp2p.WifiDirectService;
 
 public class MainActivity extends AppCompatActivity {
@@ -80,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
         myService = new Intent(getApplicationContext(), ActivityRecognitionService.class);
         startService(myService);
 
-        /*if (!WifiDirectService.isRunning()) {
+        if (!WifiDirectService.isRunning()) {
             startWifiService();
-        }*/
+        }
         persistentTripStorage = new PersistentTripStorage(getApplicationContext());
 
         tripDigestList = persistentTripStorage.getAllFullTripDigestsObjects();

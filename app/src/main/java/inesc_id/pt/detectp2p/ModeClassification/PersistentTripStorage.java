@@ -1,11 +1,10 @@
-package inesc_id.pt.detectp2p.TripStateMachine;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -13,8 +12,6 @@ import com.google.gson.Gson;
 
 import org.joda.time.DateTime;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,11 +22,11 @@ import java.util.ArrayList;
 
 import inesc_id.pt.detectp2p.DataModels.AccelerationData;
 import inesc_id.pt.detectp2p.DataModels.ActivityDataContainer;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTrip;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripDigest;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripPart;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.LocationDataContainer;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.MLInputMetadata;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripPart;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
 import inesc_id.pt.detectp2p.Utils.JSONUtils;
 import inesc_id.pt.detectp2p.Utils.ToStringSample;

@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.TripStateMachine;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,11 +11,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import inesc_id.pt.detectp2p.DataModels.AccelerationData;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.LocationDataContainer;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.MLAlgorithmInput;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.MLInputMetadata;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.ProcessedAccelerations;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.ProcessedPoints;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.MLAlgorithmInput;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.ProcessedAccelerations;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.ProcessedPoints;
 
 import static org.joda.time.DateTimeZone.UTC;
 
@@ -61,6 +61,7 @@ public class RawDataPreProcessing {
 
         Classifier.initClassifier(context, "randomForest.pmml.ser");
         classifier = Classifier.getInstance();
+
 
     }
 

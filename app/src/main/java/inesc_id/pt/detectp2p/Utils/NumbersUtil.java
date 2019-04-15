@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import inesc_id.pt.detectp2p.DataModels.AccelerationData;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
 
 /**
  * Created by admin on 1/5/18.

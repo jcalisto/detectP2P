@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.TripStateMachine.dataML;
+package inesc_id.pt.detectp2p.ModeClassification.dataML;
 
 public class ProcessedAccelerations {
 

@@ -1,11 +1,11 @@
-package inesc_id.pt.detectp2p.TripStateMachine;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
 
 /**
  * Created by Duarte on 16/02/2018.

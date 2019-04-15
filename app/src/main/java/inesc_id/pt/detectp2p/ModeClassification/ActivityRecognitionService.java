@@ -1,7 +1,6 @@
-package inesc_id.pt.detectp2p;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -15,11 +14,8 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.SystemClock;
-import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -42,10 +38,7 @@ import android.util.Log;
 import inesc_id.pt.detectp2p.DataModels.AccelerationData;
 import inesc_id.pt.detectp2p.DataModels.ActivityDataContainer;
 import inesc_id.pt.detectp2p.DataModels.ActivityDetected;
-import inesc_id.pt.detectp2p.TripStateMachine.KeepAwakeReceiver;
-import inesc_id.pt.detectp2p.TripStateMachine.TSMSnapshotHelper;
-import inesc_id.pt.detectp2p.TripStateMachine.TripStateMachine;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
 
 /**

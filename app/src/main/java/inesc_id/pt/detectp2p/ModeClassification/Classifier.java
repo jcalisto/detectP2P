@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.TripStateMachine;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import inesc_id.pt.detectp2p.DataModels.ActivityDetected;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.MLAlgorithmInput;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.MLInputMetadata;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.MLAlgorithmInput;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
 
 import static org.joda.time.DateTimeZone.UTC;
 

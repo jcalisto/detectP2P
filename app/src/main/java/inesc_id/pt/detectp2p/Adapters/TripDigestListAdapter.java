@@ -8,13 +8,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import inesc_id.pt.detectp2p.R;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripDigest;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
 import inesc_id.pt.detectp2p.Utils.LocationUtils;
 

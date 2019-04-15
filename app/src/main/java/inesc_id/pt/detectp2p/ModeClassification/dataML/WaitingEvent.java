@@ -1,6 +1,4 @@
-package inesc_id.pt.detectp2p.TripStateMachine.dataML;
-
-import android.content.Context;
+package inesc_id.pt.detectp2p.ModeClassification.dataML;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

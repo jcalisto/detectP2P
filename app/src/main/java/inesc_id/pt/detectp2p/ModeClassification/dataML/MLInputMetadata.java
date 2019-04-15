@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.TripStateMachine.dataML;
+package inesc_id.pt.detectp2p.ModeClassification.dataML;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import inesc_id.pt.detectp2p.TripStateMachine.SortMapByValue;
+import inesc_id.pt.detectp2p.ModeClassification.SortMapByValue;
 
 
 public class MLInputMetadata implements Serializable{

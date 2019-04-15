@@ -1,4 +1,4 @@
-package inesc_id.pt.detectp2p.TripStateMachine;
+package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,14 +11,14 @@ import java.util.Map;
 
 import inesc_id.pt.detectp2p.DataModels.AccelerationData;
 import inesc_id.pt.detectp2p.DataModels.ActivityDetected;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.CheckMergesResult;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.FullTripPart;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.KeyValueWrapper;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.LocationDataContainer;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.MLInputMetadata;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.Segment;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.SpeedDistanceWrapper;
-import inesc_id.pt.detectp2p.TripStateMachine.dataML.Trip;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.CheckMergesResult;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripPart;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.KeyValueWrapper;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.Segment;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.SpeedDistanceWrapper;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.Trip;
 import inesc_id.pt.detectp2p.Utils.LocationUtils;
 import inesc_id.pt.detectp2p.Utils.NumbersUtil;
 
@@ -60,6 +60,7 @@ public class RawDataDetection {
 
 
     public void insertMLMetadata(MLInputMetadata mlInputMetadata){
+        //TODO GET SEGMENT INFO HERE
         outputsMetadata.add(mlInputMetadata);
         persistentTripStorage.insertMLInputObject(mlInputMetadata);
     }
