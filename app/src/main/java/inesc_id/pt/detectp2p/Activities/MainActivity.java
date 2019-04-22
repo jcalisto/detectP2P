@@ -28,6 +28,7 @@ import java.util.List;
 import inesc_id.pt.detectp2p.ModeClassification.ActivityRecognitionService;
 import inesc_id.pt.detectp2p.Adapters.LegValidationAdapter;
 import inesc_id.pt.detectp2p.Adapters.TripDigestListAdapter;
+import inesc_id.pt.detectp2p.ModeClassification.Classifier;
 import inesc_id.pt.detectp2p.P2PNetwork.P2pBroadcastReceiver;
 import inesc_id.pt.detectp2p.R;
 import inesc_id.pt.detectp2p.ModeClassification.PersistentTripStorage;
@@ -35,6 +36,7 @@ import inesc_id.pt.detectp2p.ModeClassification.TripStateMachine;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
 import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectService;
+import inesc_id.pt.detectp2p.Utils.FileUtil;
 
 public class MainActivity extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();
@@ -53,9 +55,11 @@ public class MainActivity extends AppCompatActivity {
     Intent wifiService;
 
     //Views
-    private Button button;
+    private Button btTest;
     private Button btStartStop;
     private Button btLog;
+    private Button btConnectPeers;
+    private Button btTestRead;
 
     private ListView tripList;
 
@@ -90,38 +94,26 @@ public class MainActivity extends AppCompatActivity {
 
         tripList.setOnItemClickListener(itemClickListener);
 
-        button = findViewById(R.id.button);
         btStartStop = findViewById(R.id.btStartStop);
 
-        button.setOnClickListener(buttonListener);
         btStartStop.setOnClickListener(buttonListener);
 
         btLog = findViewById(R.id.btLog);
         btLog.setOnClickListener(buttonListener);
 
+        btConnectPeers = findViewById(R.id.btConnectPeers);
+        btConnectPeers.setOnClickListener(buttonListener);
+
+        btTest = findViewById(R.id.btTest);
+        btTest.setOnClickListener(buttonListener);
+
+        btTestRead = findViewById(R.id.btTestRead);
+        btTestRead.setOnClickListener(buttonListener);
 
 
 
 
-    }
 
-    /* Checks if external storage is available for read and write */
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if ( Environment.MEDIA_MOUNTED.equals( state ) ) {
-            return true;
-        }
-        return false;
-    }
-
-    /* Checks if external storage is available to at least read */
-    public boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        if ( Environment.MEDIA_MOUNTED.equals( state ) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals( state ) ) {
-            return true;
-        }
-        return false;
     }
 
 
@@ -171,7 +163,17 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case R.id.btLog:
-                    startWriteToLog();
+                    FileUtil.startWriteToLog();
+                    break;
+                case R.id.btConnectPeers:
+                    WifiDirectService.getInstance().sendUpdate("OLA");
+                    break;
+                case R.id.btTest:
+                    FileUtil.writeClassifier(getApplicationContext());
+                    break;
+                case R.id.btTestRead:
+                    Classifier c = FileUtil.readClassifier(getApplicationContext(), "classifier1");
+                    Log.d("FileUtil", "HASH=" + c.hashCode());
                     break;
 
             }
@@ -217,37 +219,4 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void startWriteToLog(){
-        if ( isExternalStorageWritable() ) {
-
-            File appDirectory = new File( Environment.getExternalStorageDirectory() + "/detectP2P_Folder" );
-            File logDirectory = new File( appDirectory + "/log" );
-            String date = new SimpleDateFormat("dd:MMM_HH:mm").format(new Date());
-            Log.d("Main Activity", "Date: " + date);
-            File logFile = new File( logDirectory, "logcat" + date + ".txt" );
-
-            // create app folder
-            if ( !appDirectory.exists() ) {
-                appDirectory.mkdir();
-            }
-
-            // create log folder
-            if ( !logDirectory.exists() ) {
-                logDirectory.mkdir();
-            }
-
-            // clear the previous logcat and then write the new one to the file
-            try {
-                Process process = Runtime.getRuntime().exec("logcat -c");
-                process = Runtime.getRuntime().exec("logcat -f " + logFile);
-            } catch ( IOException e ) {
-                e.printStackTrace();
-            }
-
-        } else if ( isExternalStorageReadable() ) {
-            // only readable
-        } else {
-            // not accessible
-        }
-    }
 }

@@ -3,13 +3,13 @@ package inesc_id.pt.detectp2p.Command;
 
 import inesc_id.pt.detectp2p.Response.CliResponse;
 
-public class CliUpdateCommand implements CliCommand {
+public class UpdateCommand implements CliCommand {
 
     private static final long serialVersionUID = -8907331723807741905L;
 
     private String update;
 
-    public CliUpdateCommand(String update) {
+    public UpdateCommand(String update) {
         this.update = update;
     }
 

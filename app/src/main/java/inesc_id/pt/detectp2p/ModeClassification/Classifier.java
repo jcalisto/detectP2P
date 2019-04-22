@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import org.dmg.pmml.FieldName;
 import org.joda.time.DateTime;
 import org.jpmml.android.EvaluatorUtil;
@@ -13,7 +15,11 @@ import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelField;
 import org.jpmml.evaluator.OutputField;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,8 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDetected;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLAlgorithmInput;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
+import inesc_id.pt.detectp2p.Utils.JSONUtils;
 
 import static org.joda.time.DateTimeZone.UTC;
 
@@ -30,7 +38,7 @@ import static org.joda.time.DateTimeZone.UTC;
  * Created by constantin on 7/31/18.
  */
 
-public class Classifier {
+public class Classifier implements Serializable {
 
     private final static String TAG = "Classifier";
 
@@ -201,7 +209,6 @@ public class Classifier {
         }
         return predicts;
     }
-
 
     private Object getValueByInput(FieldName inputFieldName, MLAlgorithmInput input) {
         // Log.d("---InputFiled:", inputFieldName.getValue());

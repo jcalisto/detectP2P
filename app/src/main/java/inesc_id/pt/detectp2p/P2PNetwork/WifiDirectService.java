@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import inesc_id.pt.detectp2p.Command.CliCommand;
-import inesc_id.pt.detectp2p.Command.CliUpdateCommand;
+import inesc_id.pt.detectp2p.Command.UpdateCommand;
 import inesc_id.pt.detectp2p.Command.CommandCliHandlerImpl;
 import inesc_id.pt.detectp2p.Response.CliResponse;
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
@@ -117,15 +117,11 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
 
     @Override
     public void onGroupInfoAvailable(SimWifiP2pDeviceList deviceList, SimWifiP2pInfo simWifiP2pInfo) {
-
         peersByName.clear();
 
         myName = simWifiP2pInfo.getDeviceName();
 
         for (SimWifiP2pDevice device : deviceList.getDeviceList()) {
-            if (device.deviceName.equals(myName)) {
-                continue;
-            }
             peersByName.put(device.deviceName, device.getVirtIp());
             Log.d("WIFI-SERVICE", "onGroupInfoAvailable: added " + device.deviceName);
         }
@@ -133,7 +129,12 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
 
     @Override
     public void onPeersAvailable(SimWifiP2pDeviceList deviceList) {
-        //TODO something
+        peersByName.clear();
+
+        for (SimWifiP2pDevice device : deviceList.getDeviceList()) {
+            peersByName.put(device.deviceName, device.getVirtIp());
+            Log.d("WIFI-SERVICE", "Peer List updated - added " + device.deviceName);
+        }
     }
 
 
@@ -228,7 +229,7 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
         protected String doInBackground(String[] params) {
             try {
                 mCliSocket = new SimWifiP2pSocket(params[0], PORT);
-                CliUpdateCommand command = new CliUpdateCommand(update);
+                UpdateCommand command = new UpdateCommand(update);
                 ObjectOutputStream oos = new ObjectOutputStream(mCliSocket.getOutputStream());
                 oos.writeObject(command);
                 Log.d("WIFI-SERVICE", "Sent update!");
@@ -248,6 +249,7 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
 
 
     //////////////// COMMUNICATION METHODS /////////////////////
+    //Method to send current detected mode to every peer
     public void sendUpdate(String update){
         for (Map.Entry<String, String> entry : peersByName.entrySet()) {
             Log.d("WIFI-SERVICE", "Sending update to " + entry.getKey());

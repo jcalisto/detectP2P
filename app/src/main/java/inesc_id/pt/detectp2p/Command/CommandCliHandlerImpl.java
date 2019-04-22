@@ -8,7 +8,7 @@ public class CommandCliHandlerImpl implements CommandClientHandler{
 
 
     @Override
-    public CliResponse handle(CliUpdateCommand c) {
+    public CliResponse handle(UpdateCommand c) {
         //TODO
         Log.d("UPDATE HANDLER", " RECEIVED: " + c.getUpdate());
         return null;
