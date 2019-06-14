@@ -2,6 +2,7 @@ package inesc_id.pt.detectp2p.ModeClassification;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -15,6 +16,8 @@ import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelField;
 import org.jpmml.evaluator.OutputField;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,11 +28,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDetected;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLAlgorithmInput;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
+import inesc_id.pt.detectp2p.P2PNetwork.DataModels.ModeInfo;
+import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectService;
+import inesc_id.pt.detectp2p.TransportModeDetection;
+import inesc_id.pt.detectp2p.Utils.FileUtil;
 import inesc_id.pt.detectp2p.Utils.JSONUtils;
 
 import static org.joda.time.DateTimeZone.UTC;
@@ -48,6 +56,7 @@ public class Classifier implements Serializable {
     private Evaluator evaluator;
     private static String evaluatorType;
 
+    ReentrantLock lock = new ReentrantLock();
 
     private Classifier() {
 //        evaluatorType = "randomForest.pmml.ser";
@@ -57,6 +66,28 @@ public class Classifier implements Serializable {
     public static void initClassifier(Context context, String evaluatorFileName){
         assetManager = context.getAssets();
         evaluatorType = evaluatorFileName;
+    }
+
+    public void changeClassifierFromDisk(Context context, String classifierFileName){
+        try {
+            File appDirectory = new File(Environment.getExternalStorageDirectory() + "/detectP2P_Folder");
+            File logDirectory = new File(appDirectory + "/ML_Models");
+            File file = new File(logDirectory, classifierFileName);
+            InputStream is = new FileInputStream(file);
+
+            lock.lock();
+            try {
+                evaluator = EvaluatorUtil.createEvaluator(is);
+                evaluator.verify();
+            } finally {
+                lock.unlock();
+            }
+
+
+        }catch (Exception e){
+            Log.e("Classifier", e.getMessage());
+        }
+
     }
 
     public static Classifier getInstance(){
@@ -70,6 +101,12 @@ public class Classifier implements Serializable {
     private Evaluator createEvaluator(String name) throws Exception {
 
         InputStream is = assetManager.open(name);
+
+//        File appDirectory = new File( Environment.getExternalStorageDirectory() + "/detectP2P_Folder" );
+//        File logDirectory = new File( appDirectory + "/ML_Models" );
+//        File file = new File( logDirectory, "classifier_v2.pmml.ser" );
+//        InputStream is = new FileInputStream(file);
+
         try{
             return EvaluatorUtil.createEvaluator(is);
         } catch (Exception e){
@@ -158,8 +195,10 @@ public class Classifier implements Serializable {
 
         if((mlAlgorithmInput.getProcessedPoints().getAvgSpeed() <= keys.STILL_AVG_SPEED_FILTER)
                 && (mlAlgorithmInput.getAccelsBelowFilter() >= keys.STILL_ACCELS_BELOW_FILTER)){
-
+            lock.lock();
             List<OutputField> outputFields = evaluator.getOutputFields();
+            lock.unlock();
+
             for(OutputField outputField : outputFields){
                 Integer mode = Integer.valueOf(outputField.getOutputField().getValue());
                 Double prob = 0.0;
@@ -173,6 +212,11 @@ public class Classifier implements Serializable {
         }
 
         MLInputMetadata result = new MLInputMetadata(mlAlgorithmInput, predicts);
+
+
+        //Update WIFI DIRECT SERVICE WITH CURRENT MODE
+        WifiDirectService.getInstance().setCurrentModeInfo(new ModeInfo(result.getProbasDicts()));
+        TransportModeDetection.getInstance().setCurrentModeInfo(new ModeInfo(result.getProbasDicts()));
         Log.d(TAG, "Segment Evaluated!!" + result.getBestMode().getKey());
         return result;
     }
@@ -181,7 +225,9 @@ public class Classifier implements Serializable {
 
         Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
 
+        lock.lock();
         List<InputField> inputFields = evaluator.getInputFields();
+        lock.unlock();
         for(InputField inputField : inputFields){
             FieldName inputFieldName = inputField.getName();
 
@@ -193,10 +239,10 @@ public class Classifier implements Serializable {
 
             arguments.put(inputFieldName, inputFieldValue);
         }
-
+        lock.lock();
         Map<FieldName, ?> results = evaluator.evaluate(arguments);
-
         List<OutputField> outputFields = evaluator.getOutputFields();
+        lock.unlock();
         HashMap<Integer, Double> predicts = new HashMap<>();
         for(OutputField outputField : outputFields){
             FieldName outputFieldName = outputField.getName();

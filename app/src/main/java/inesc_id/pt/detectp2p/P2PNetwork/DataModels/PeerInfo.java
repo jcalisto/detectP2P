@@ -10,6 +10,12 @@ public class PeerInfo {
     private String name;
     private Map<Integer, ModeInfo> modeInfoByTime;
 
+    public PeerInfo(String name){
+        time = 0;
+        this.name = name;
+    }
+
+
     public int getTime() {
         return time;
     }
@@ -32,5 +38,19 @@ public class PeerInfo {
 
     public void setModeInfoByTime(Map<Integer, ModeInfo> modeInfoByTime) {
         this.modeInfoByTime = modeInfoByTime;
+    }
+
+    public void  addModeInfo(ModeInfo modeInfo){
+        increaseTimer();
+        if(modeInfoByTime.containsKey(time)){
+            addModeInfo(modeInfo);
+        }
+        else{
+            modeInfoByTime.put(time, modeInfo);
+        }
+    }
+
+    public void increaseTimer(){
+        time += 1;
     }
 }

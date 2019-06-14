@@ -10,6 +10,12 @@ public class ModeInfo {
     private HashMap<Integer, Double> probasDicts;
     private List<KeyValueWrapper> probasOrdered;
 
+    private int detectedMode;
+
+    public ModeInfo(HashMap<Integer, Double> probasDicts){
+        this.probasDicts = probasDicts;
+    }
+
     public HashMap<Integer, Double> getProbasDicts() {
         return probasDicts;
     }
@@ -24,5 +30,13 @@ public class ModeInfo {
 
     public void setProbasOrdered(List<KeyValueWrapper> probasOrdered) {
         this.probasOrdered = probasOrdered;
+    }
+
+    public int getDetectedMode() {
+        return detectedMode;
+    }
+
+    public void setDetectedMode(int detectedMode) {
+        this.detectedMode = detectedMode;
     }
 }

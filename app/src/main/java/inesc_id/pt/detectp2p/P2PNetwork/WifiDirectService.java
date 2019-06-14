@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -18,11 +20,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-import inesc_id.pt.detectp2p.Command.CliCommand;
+import inesc_id.pt.detectp2p.Command.ClassificationUpdate;
+import inesc_id.pt.detectp2p.Command.Command;
 import inesc_id.pt.detectp2p.Command.UpdateCommand;
 import inesc_id.pt.detectp2p.Command.CommandCliHandlerImpl;
+import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
+import inesc_id.pt.detectp2p.P2PNetwork.DataModels.ModeInfo;
 import inesc_id.pt.detectp2p.Response.CliResponse;
+import inesc_id.pt.detectp2p.Taks.SendPredictionTask;
+import inesc_id.pt.detectp2p.Taks.SendUpdateTask;
+import inesc_id.pt.detectp2p.TransportModeDetection;
+import inesc_id.pt.detectp2p.Utils.FileUtil;
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
 import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
@@ -46,12 +56,14 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
     private SimWifiP2pSocket mCliSocket = null;
 
     private P2pBroadcastReceiver receiver;
-    private Map<String, String> peersByName = new HashMap<String, String>();
     private static WifiDirectService instance;
 
     private CommandCliHandlerImpl handler;
 
     private String myName;
+
+    //Device Name -> Virtual IP
+    private Map<String, String> peersByName = new HashMap<String, String>();
 
     public WifiDirectService(){
         instance = this;
@@ -60,6 +72,10 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
     public static WifiDirectService getInstance(){
         return instance;
     }
+
+
+    private ModeInfo currentModeInfo;
+
 
 
 
@@ -71,7 +87,29 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
         mBound = true;
         handler = new CommandCliHandlerImpl();
 
+        //Set unique device name
+        //Used to keep track of each peer
+        myName = UUID.randomUUID().toString();
+
+        TransportModeDetection.getInstance();
+
         new IncommingCommTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        final Handler handler = new Handler();
+        final int delay = 60 * 1000; //milliseconds
+
+        handler.postDelayed(new Runnable(){
+            public void run(){
+                if(currentModeInfo != null) {
+                    Log.d("SendCurrentModeUpdate", "Start to send current mode update!");
+                    sendCurrentDetectedMode(currentModeInfo);
+                } else {
+                    Log.d("SendCurrentModeUpdate", "Can't send update, no info available");
+                }
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
+
         Log.d("WIFI-SERVICE", "INITIALIZED");
         return Service.START_STICKY;
     }
@@ -172,6 +210,12 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
     }
 
 
+    public void setCurrentModeInfo(ModeInfo currentModeInfo){
+        Log.d("WifiService", "Updating current mode info");
+        this.currentModeInfo = currentModeInfo;
+    }
+
+
     ///////////////////// COMMUNICATION TASKS //////////////////
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
 
@@ -191,13 +235,17 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
                     Log.d("WIFI-SERVICE", "Received Request");
                     try {
                         ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
-                        CliCommand cmd = null;
+                        Command cmd = null;
                         try {
-                            cmd = (CliCommand) ois.readObject();
+                            cmd = (Command) ois.readObject();
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }
-                        CliResponse cliResponse= cmd.handle(handler);
+                        CliResponse cliResponse = null;
+                        if(cmd != null && cmd instanceof UpdateCommand) {
+                            UpdateCommand update = (UpdateCommand) cmd;
+                            cliResponse = handler.handle(update);
+                        }
                         Log.d("WIFI-SERVICE", "Received Communication");
 
                         ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
@@ -217,43 +265,32 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
         }
     }
 
-
-    public class SendUpdateTask extends AsyncTask<String, String, String> {
-        private String update;
-
-        public SendUpdateTask(String update){
-            this.update = update;
-        }
-
-        @Override
-        protected String doInBackground(String[] params) {
-            try {
-                mCliSocket = new SimWifiP2pSocket(params[0], PORT);
-                UpdateCommand command = new UpdateCommand(update);
-                ObjectOutputStream oos = new ObjectOutputStream(mCliSocket.getOutputStream());
-                oos.writeObject(command);
-                Log.d("WIFI-SERVICE", "Sent update!");
-                ObjectInputStream ois = new ObjectInputStream(mCliSocket.getInputStream());
-
-                mCliSocket.close();
-                mCliSocket = null;
-                return "ACK";
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mCliSocket = null;
-            return null;
-        }
-
-    }
-
-
     //////////////// COMMUNICATION METHODS /////////////////////
-    //Method to send current detected mode to every peer
+    //Method to send new classifier to peers
     public void sendUpdate(String update){
+
+        UpdateCommand command = new UpdateCommand("classifier_v2", FileUtil.readClassifierToBytes());
+
         for (Map.Entry<String, String> entry : peersByName.entrySet()) {
             Log.d("WIFI-SERVICE", "Sending update to " + entry.getKey());
-            new SendUpdateTask(update).execute(entry.getValue());
+            new SendUpdateTask(command).execute(entry.getValue());
         }
     }
+
+
+    //Method to send current detected mode to every peer
+    public void sendCurrentDetectedMode(ModeInfo currentModeInfo){
+
+        ClassificationUpdate classificationUpdate = new ClassificationUpdate(currentModeInfo.getDetectedMode(),
+                                                        currentModeInfo.getProbasDicts(),
+                                                        myName);
+
+        for (Map.Entry<String, String> entry : peersByName.entrySet()) {
+            Log.d("WIFI-SERVICE", "Sending update to " + entry.getKey());
+            new SendPredictionTask(classificationUpdate).execute(entry.getValue());
+        }
+
+
+    }
+
 }

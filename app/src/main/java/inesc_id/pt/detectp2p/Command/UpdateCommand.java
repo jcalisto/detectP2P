@@ -1,28 +1,39 @@
 package inesc_id.pt.detectp2p.Command;
 
 
+import android.util.Log;
+
 import inesc_id.pt.detectp2p.Response.CliResponse;
 
-public class UpdateCommand implements CliCommand {
+public class UpdateCommand implements Command {
 
     private static final long serialVersionUID = -8907331723807741905L;
 
-    private String update;
 
-    public UpdateCommand(String update) {
-        this.update = update;
+    private String modelId;
+    private byte[] modelBytes;
+
+    public UpdateCommand(String modelId, byte[] bytes) {
+        Log.d("UpdateCommand", "Creating update command, bytes size=" + bytes.length);
+        this.modelId = modelId;
+        this.modelBytes = bytes;
+
     }
 
-    public String getUpdate() {
-        return update;
+    public String getModelId() {
+        return modelId;
     }
 
-    public void setUpdate(String update) {
-        this.update = update;
+    public void setModelId(String update) {
+        this.modelId = update;
     }
 
-    @Override
-    public CliResponse handle(CommandClientHandler ch) {
-        return ch.handle(this);
+    public byte[] getModelBytes() {
+        return modelBytes;
     }
+
+    public void setModelBytes(byte[] modelBytes) {
+        this.modelBytes = modelBytes;
+    }
+
 }

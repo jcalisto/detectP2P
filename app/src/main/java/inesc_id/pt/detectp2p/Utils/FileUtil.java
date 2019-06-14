@@ -1,17 +1,24 @@
 package inesc_id.pt.detectp2p.Utils;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -73,6 +80,20 @@ public class FileUtil {
         }
     }
 
+    public static byte[] readClassifierToBytes(){
+        File appDirectory = new File( Environment.getExternalStorageDirectory() + "/detectP2P_Folder" );
+        File logDirectory = new File( appDirectory + "/ML_Models" );
+        File file = new File( logDirectory, "classifier_v2.pmml.ser" );
+
+        byte[] classifier = null;
+        try {
+            classifier = FileUtils.readFileToByteArray(file);
+
+        } catch(Exception e) { Log.e("FileUtil", e.getMessage()); }
+
+        return classifier;
+    }
+
     public static Classifier readClassifier(Context context, String fileName){
 
         File appDirectory = new File( Environment.getExternalStorageDirectory() + "/detectP2P_Folder" );
@@ -94,13 +115,42 @@ public class FileUtil {
 
     }
 
-    public static void writeClassifier(Context context){
-        if ( isExternalStorageWritable() ) {
+    public static void writeClassifier(String fileName, byte[] classifierBytes){
+        File appDirectory = new File( Environment.getExternalStorageDirectory() + "/detectP2P_Folder" );
+        File logDirectory = new File( appDirectory + "/ML_Models" );
+        File file = new File( logDirectory, fileName);
+
+        // create app folder
+        if ( !appDirectory.exists() ) {
+            appDirectory.mkdir();
+        }
+
+        // create log folder
+        if ( !logDirectory.exists() ) {
+            logDirectory.mkdir();
+        }
+
+
+        try {
+            FileOutputStream fOutputStream = new FileOutputStream(file, false);
+            FileUtils.writeByteArrayToFile(file, classifierBytes);
+
+        } catch (Exception e) {
+            Log.e("FileUtil", e.getMessage());
+        }
+    }
+
+    public static void copyAssets(Context context) {
+        AssetManager assetManager = context.getAssets();
+
+        InputStream in = null;
+        try {
+            in = assetManager.open("randomForest.pmml.ser");
+            in.reset();
 
             File appDirectory = new File( Environment.getExternalStorageDirectory() + "/detectP2P_Folder" );
             File logDirectory = new File( appDirectory + "/ML_Models" );
-
-            File file = new File( logDirectory, "classifier1" );
+            File file = new File( logDirectory, "classifier_v2.pmml.ser" );
 
             // create app folder
             if ( !appDirectory.exists() ) {
@@ -111,24 +161,31 @@ public class FileUtil {
             if ( !logDirectory.exists() ) {
                 logDirectory.mkdir();
             }
-            Log.d("FileUtil", "Writing classifier with hash=" + c.hashCode());
 
-            // clear the previous logcat and then write the new one to the file
-            try {
-                FileOutputStream fos = new FileOutputStream(file);
-                ObjectOutputStream os = new ObjectOutputStream(fos);
-                os.writeObject("x");
-                os.close();
-                fos.close();
+            copyFile(in, file);
 
-            } catch ( IOException e ) {
-                e.printStackTrace();
+        } catch(IOException e) {
+            Log.e("FileUtil", "Failed to copy asset file");
+        }
+    }
+
+    private static void copyFile(InputStream in, File dest) {
+
+        try {
+            int length = 0;
+
+            InputStream inputStream = in;
+            FileOutputStream fOutputStream = new FileOutputStream(dest);
+            //note the following line
+            byte[] buffer = new byte[65536];
+            while ((length = inputStream.read(buffer)) > 0) {
+                fOutputStream.write(buffer, 0, length);
             }
-
-        } else if ( isExternalStorageReadable() ) {
-            // only readable
-        } else {
-            // not accessible
+            fOutputStream.flush();
+            fOutputStream.close();
+            inputStream.close();
+        } catch (Exception e) {
+            Log.e("FileUtil", e.getMessage());
         }
     }
 }

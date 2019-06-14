@@ -36,6 +36,7 @@ import inesc_id.pt.detectp2p.ModeClassification.TripStateMachine;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
 import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectService;
+import inesc_id.pt.detectp2p.Taks.RequestToServerTask;
 import inesc_id.pt.detectp2p.Utils.FileUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btLog;
     private Button btConnectPeers;
     private Button btTestRead;
+    private Button btRequestServer;
 
     private ListView tripList;
 
@@ -109,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
 
         btTestRead = findViewById(R.id.btTestRead);
         btTestRead.setOnClickListener(buttonListener);
+
+        btRequestServer = findViewById(R.id.btRequestServer);
+        btRequestServer.setOnClickListener(buttonListener);
 
 
 
@@ -169,11 +174,14 @@ public class MainActivity extends AppCompatActivity {
                     WifiDirectService.getInstance().sendUpdate("OLA");
                     break;
                 case R.id.btTest:
-                    FileUtil.writeClassifier(getApplicationContext());
+                    FileUtil.copyAssets(getApplicationContext());
                     break;
                 case R.id.btTestRead:
                     Classifier c = FileUtil.readClassifier(getApplicationContext(), "classifier1");
                     Log.d("FileUtil", "HASH=" + c.hashCode());
+                    break;
+                case R.id.btRequestServer:
+                    new RequestToServerTask().execute("9090");
                     break;
 
             }
