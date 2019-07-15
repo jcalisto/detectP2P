@@ -5,8 +5,6 @@ import android.content.res.AssetManager;
 import android.os.Environment;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import org.dmg.pmml.FieldName;
 import org.joda.time.DateTime;
 import org.jpmml.android.EvaluatorUtil;
@@ -18,10 +16,7 @@ import org.jpmml.evaluator.OutputField;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,14 +26,11 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDetected;
-import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLAlgorithmInput;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
 import inesc_id.pt.detectp2p.P2PNetwork.DataModels.ModeInfo;
-import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectService;
+import inesc_id.pt.detectp2p.P2PNetwork.TermiteWifiManager;
 import inesc_id.pt.detectp2p.TransportModeDetection;
-import inesc_id.pt.detectp2p.Utils.FileUtil;
-import inesc_id.pt.detectp2p.Utils.JSONUtils;
 
 import static org.joda.time.DateTimeZone.UTC;
 
@@ -215,9 +207,14 @@ public class Classifier implements Serializable {
 
 
         //Update WIFI DIRECT SERVICE WITH CURRENT MODE
-        WifiDirectService.getInstance().setCurrentModeInfo(new ModeInfo(result.getProbasDicts()));
+        TermiteWifiManager.getInstance().setCurrentModeInfo(new ModeInfo(result.getProbasDicts()));
         TransportModeDetection.getInstance().setCurrentModeInfo(new ModeInfo(result.getProbasDicts()));
         Log.d(TAG, "Segment Evaluated!!" + result.getBestMode().getKey());
+
+        for(Integer key : result.getProbasDicts().keySet()){
+            Log.d("CHECK_DICT", "MODE:" + key + ", PROBABILITY:" + result.getProbasDicts().get(key));
+        }
+
         return result;
     }
 

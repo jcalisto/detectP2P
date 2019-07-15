@@ -11,15 +11,15 @@ import java.util.List;
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pInfo;
 
-public class P2pBroadcastReceiver extends android.content.BroadcastReceiver {
+public class TermiteBroadcastReceiver extends android.content.BroadcastReceiver {
 
-    private static String TAG = "P2pBroadcastReceiver";
+    private static String TAG = "TermiteBroadcastReceiver";
 
-    private WifiDirectService service;
+    private TermiteWifiManager service;
 
     private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
 
-    public P2pBroadcastReceiver(WifiDirectService service){
+    public TermiteBroadcastReceiver(TermiteWifiManager service){
         super();
         this.service = service;
     }

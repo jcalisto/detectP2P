@@ -36,7 +36,7 @@
         <service android:name=".ModeClassification.ActivityRecognitionService" />
 
         <service
-            android:name=".P2PNetwork.WifiDirectService"
+            android:name=".P2PNetwork.TermiteWifiManager"
             android:enabled="true"
             android:exported="false" />
 

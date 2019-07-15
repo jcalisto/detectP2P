@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Messenger;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -26,7 +25,6 @@ import inesc_id.pt.detectp2p.Command.ClassificationUpdate;
 import inesc_id.pt.detectp2p.Command.Command;
 import inesc_id.pt.detectp2p.Command.UpdateCommand;
 import inesc_id.pt.detectp2p.Command.CommandCliHandlerImpl;
-import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
 import inesc_id.pt.detectp2p.P2PNetwork.DataModels.ModeInfo;
 import inesc_id.pt.detectp2p.Response.CliResponse;
 import inesc_id.pt.detectp2p.Taks.SendPredictionTask;
@@ -44,7 +42,7 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 
 
-public class WifiDirectService extends Service implements SimWifiP2pManager.PeerListListener, SimWifiP2pManager.GroupInfoListener{
+public class TermiteWifiManager extends Service implements SimWifiP2pManager.PeerListListener, SimWifiP2pManager.GroupInfoListener{
 
     final static int PORT = 10001;
 
@@ -55,8 +53,8 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
     private SimWifiP2pSocketServer mSrvSocket = null;
     private SimWifiP2pSocket mCliSocket = null;
 
-    private P2pBroadcastReceiver receiver;
-    private static WifiDirectService instance;
+    private TermiteBroadcastReceiver receiver;
+    private static TermiteWifiManager instance;
 
     private CommandCliHandlerImpl handler;
 
@@ -65,11 +63,11 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
     //Device Name -> Virtual IP
     private Map<String, String> peersByName = new HashMap<String, String>();
 
-    public WifiDirectService(){
+    public TermiteWifiManager(){
         instance = this;
     }
 
-    public static WifiDirectService getInstance(){
+    public static TermiteWifiManager getInstance(){
         return instance;
     }
 
@@ -131,13 +129,13 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
     public void updatePeers(){
         Log.d("WIFI-SERVICE", "Request Peer Update");
         if(mBound)
-            mManager.requestPeers(mChannel, WifiDirectService.this);
+            mManager.requestPeers(mChannel, TermiteWifiManager.this);
     }
 
     public void updateGroup(){
         Log.d("WIFI-SERVICE", "Request Group Update");
         if (mBound)
-            mManager.requestGroupInfo(mChannel, WifiDirectService.this);
+            mManager.requestGroupInfo(mChannel, TermiteWifiManager.this);
     }
 
     private void initializeWifiDirect() {
@@ -149,7 +147,7 @@ public class WifiDirectService extends Service implements SimWifiP2pManager.Peer
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
-        receiver = new P2pBroadcastReceiver(WifiDirectService.this);
+        receiver = new TermiteBroadcastReceiver(TermiteWifiManager.this);
         registerReceiver(receiver, filter);
     }
 

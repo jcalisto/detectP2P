@@ -309,11 +309,14 @@ public class PersistentTripStorage {
 
         String filePath = context.getFilesDir().getPath()  + "/" + tripID;
 
+        Log.d(TAG, "Fetching from filepath= " + filePath);
         FileInputStream is = null;
         try {
             is = new FileInputStream(filePath);
             ObjectInputStream ois = new ObjectInputStream(is);
             String emp = (String) ois.readObject();
+
+            Log.d(TAG, "Got objectString= " + emp);
             ois.close();
             is.close();
 

@@ -1,5 +1,6 @@
 package inesc_id.pt.detectp2p.P2PNetwork.DataModels;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import inesc_id.pt.detectp2p.P2PNetwork.DataModels.ModeInfo;
@@ -7,8 +8,9 @@ import inesc_id.pt.detectp2p.P2PNetwork.DataModels.ModeInfo;
 public class PeerInfo {
 
     private int time;
+    private long lastTimeStamp;
     private String name;
-    private Map<Integer, ModeInfo> modeInfoByTime;
+    private Map<Integer, ModeInfo> modeInfoByTime = new HashMap<>();
 
     public PeerInfo(String name){
         time = 0;
@@ -40,8 +42,18 @@ public class PeerInfo {
         this.modeInfoByTime = modeInfoByTime;
     }
 
+
+    public long getLastTimeStamp() {
+        return lastTimeStamp;
+    }
+
+    public void setLastTimeStamp(long lastTimeStamp) {
+        this.lastTimeStamp = lastTimeStamp;
+    }
+
     public void  addModeInfo(ModeInfo modeInfo){
         increaseTimer();
+        lastTimeStamp = System.currentTimeMillis();
         if(modeInfoByTime.containsKey(time)){
             addModeInfo(modeInfo);
         }

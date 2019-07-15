@@ -1,14 +1,14 @@
 package inesc_id.pt.detectp2p.Activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.*;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,52 +18,59 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import inesc_id.pt.detectp2p.ModeClassification.ActivityRecognitionService;
 import inesc_id.pt.detectp2p.Adapters.LegValidationAdapter;
 import inesc_id.pt.detectp2p.Adapters.TripDigestListAdapter;
 import inesc_id.pt.detectp2p.ModeClassification.Classifier;
-import inesc_id.pt.detectp2p.P2PNetwork.P2pBroadcastReceiver;
+import inesc_id.pt.detectp2p.P2PNetwork.TermiteBroadcastReceiver;
+import inesc_id.pt.detectp2p.P2PNetwork.TermiteWifiManager;
+import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectBroadcastReceiver;
+import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectManager;
 import inesc_id.pt.detectp2p.R;
 import inesc_id.pt.detectp2p.ModeClassification.PersistentTripStorage;
 import inesc_id.pt.detectp2p.ModeClassification.TripStateMachine;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
-import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectService;
 import inesc_id.pt.detectp2p.Taks.RequestToServerTask;
 import inesc_id.pt.detectp2p.Utils.FileUtil;
 
 public class MainActivity extends AppCompatActivity {
-    private final IntentFilter intentFilter = new IntentFilter();
-    private WifiP2pManager mManager;
-    private Channel mChannel;
-    private P2pBroadcastReceiver receiver;
-    private List<WifiP2pDevice> peers = new ArrayList<>();
 
-    private PersistentTripStorage persistentTripStorage;
+    // CHOOSE WIFI DIRECT OR TERMITE MODE
+    public static int MODE_TERMITE = 0;
+    public static int MODE_WIFIDIRECT = 1;
+    int mode = MODE_WIFIDIRECT;
 
-    private ArrayList<FullTripDigest> tripDigestList = new ArrayList<>();
+    // WIFI DIRECT MANAGER
+    WifiDirectManager wifiDirectManager;
 
-    private TripDigestListAdapter tripDigestAdapter;
 
+    //Termite Objects
+    ///////////////////////////
+    private TermiteBroadcastReceiver termiteBroadcastReceiver;
     Intent myService;
     Intent wifiService;
+    ///////////////////////////
 
-    //Views
+    // UI VIEWS
+    /////////////////////////////////
     private Button btTest;
     private Button btStartStop;
     private Button btLog;
     private Button btConnectPeers;
     private Button btTestRead;
     private Button btRequestServer;
-
     private ListView tripList;
+    /////////////////////////////////
+
+    // DATA
+    ///////////////////////////
+    private PersistentTripStorage persistentTripStorage;
+    private ArrayList<FullTripDigest> tripDigestList = new ArrayList<>();
+    private TripDigestListAdapter tripDigestAdapter;
+    ///////////////////////////
 
     public MainActivity() {
         super();
@@ -75,11 +82,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main);
 
 
-        //SERVICE INITIALIZATION
+        //ACTIVITY DETECTION SERVICE INITIALIZATION
         myService = new Intent(getApplicationContext(), ActivityRecognitionService.class);
         startService(myService);
 
-        if (!WifiDirectService.isRunning()) {
+
+        //INIT WIFI DIRECT OBJECTS
+        wifiDirectManager = WifiDirectManager.startInstance(this);
+
+        if(mode == MODE_TERMITE && !TermiteWifiManager.isRunning()) {
             startWifiService();
         }
         persistentTripStorage = new PersistentTripStorage(getApplicationContext());
@@ -114,32 +125,26 @@ public class MainActivity extends AppCompatActivity {
 
         btRequestServer = findViewById(R.id.btRequestServer);
         btRequestServer.setOnClickListener(buttonListener);
-
-
-
-
-
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        /*if (!WifiDirectService.isRunning()) {
-            startWifiService();
-        }*/
+        wifiDirectManager.registerWifiReceiver();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        wifiDirectManager.unregisterWifiReceiver();
     }
 
     public void startWifiService(){
         new Thread() {
             public void run() {
                 Log.d("WIFI-SERVICE", "STARTING INTENT");
-                wifiService = new Intent(getApplicationContext(), WifiDirectService.class);
+                wifiService = new Intent(getApplicationContext(), TermiteWifiManager.class);
                 startService(wifiService);
             }
         }.start();
@@ -149,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            //WifiDirectService.getInstance().sendUpdate("HELLO PEER ");
+            //TermiteWifiManager.getInstance().sendUpdate("HELLO PEER ");
 
             switch (view.getId()){
                 case R.id.btStartStop:
@@ -171,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     FileUtil.startWriteToLog();
                     break;
                 case R.id.btConnectPeers:
-                    WifiDirectService.getInstance().sendUpdate("OLA");
+                    TermiteWifiManager.getInstance().sendUpdate("OLA");
                     break;
                 case R.id.btTest:
                     FileUtil.copyAssets(getApplicationContext());
@@ -194,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
             FullTripDigest fullTripDigest = (FullTripDigest) adapterView.getItemAtPosition(i);
 
             FullTrip fullTrip = persistentTripStorage.getFullTripByDate(fullTripDigest.getTripID());
+
             Log.d("LegAdapter", "Getting full trip with ID=" + fullTripDigest.getTripID());
             if(fullTrip==null)
                 Log.d("LegAdapter", "FULL TRIP NULL");

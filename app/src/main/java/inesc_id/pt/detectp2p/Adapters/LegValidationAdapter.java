@@ -61,6 +61,7 @@ public class LegValidationAdapter extends BaseAdapter {
 
         Trip trip = (Trip) fullTripToBeValidated.getTripList().get(i);
 
+
         if(view == null) {
 
             mViewHolder = new ViewHolder();

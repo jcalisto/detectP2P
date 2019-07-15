@@ -1,5 +1,7 @@
 package inesc_id.pt.detectp2p.Utils;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -203,6 +205,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
         return new TypeAdapter<R>() {
             @Override public R read(JsonReader in) throws IOException {
                 JsonElement jsonElement = Streams.parse(in);
+                Log.d("RunTimeAdapterFac", "FIELD NAME= " + typeFieldName);
                 JsonElement labelJsonElement = jsonElement.getAsJsonObject().remove(typeFieldName);
                 if (labelJsonElement == null) {
                     throw new JsonParseException("cannot deserialize " + baseType

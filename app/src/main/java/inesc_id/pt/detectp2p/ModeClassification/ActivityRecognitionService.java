@@ -159,9 +159,9 @@ public class ActivityRecognitionService extends Service implements GoogleApiClie
                     }else{
 
                         if(currentlyRequestingLocations){
-                            Log.d(TAG, "We are inside the GPS test period");
+                            //Log.d(TAG, "We are inside the GPS test period");
                         }else{
-                            Log.d(TAG, "GPS is not activated and the time has not passed");
+                            //Log.d(TAG, "GPS is not activated and the time has not passed");
                         }
 
                         accelerationDataLinkedList.addLast(new AccelerationData(linear_acceleration[0],linear_acceleration[1],linear_acceleration[2],System.currentTimeMillis()));
@@ -226,8 +226,8 @@ public class ActivityRecognitionService extends Service implements GoogleApiClie
 
 
 
-                Log.d(TAG, linear_acceleration[1] + "  " + linear_acceleration[1] + "  " + linear_acceleration[2] + " at " + System.currentTimeMillis() + " startid="+startId + "event ts: " + DateHelper.getDateFromTSString(computedTimestamp));
-                Log.d(TAG, ""+Math.sqrt(linear_acceleration[0]*linear_acceleration[0]+linear_acceleration[1]*linear_acceleration[1]+linear_acceleration[2]*linear_acceleration[2]));
+                //Log.d(TAG, linear_acceleration[1] + "  " + linear_acceleration[1] + "  " + linear_acceleration[2] + " at " + System.currentTimeMillis() + " startid="+startId + "event ts: " + DateHelper.getDateFromTSString(computedTimestamp));
+                //Log.d(TAG, ""+Math.sqrt(linear_acceleration[0]*linear_acceleration[0]+linear_acceleration[1]*linear_acceleration[1]+linear_acceleration[2]*linear_acceleration[2]));
 
 
             }
