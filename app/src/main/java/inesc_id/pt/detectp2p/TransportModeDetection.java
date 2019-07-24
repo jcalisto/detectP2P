@@ -104,6 +104,10 @@ public class TransportModeDetection {
         this.classifierModeInfo = currentModeInfo;
     }
 
+    public ModeInfo getClassifierModeInfo() {
+        return classifierModeInfo;
+    }
+
     private void takeDecision() {
         //TODO
         Log.d(TAG, "Taking decision");

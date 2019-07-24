@@ -207,7 +207,8 @@ public class Classifier implements Serializable {
 
 
         //Update WIFI DIRECT SERVICE WITH CURRENT MODE
-        TermiteWifiManager.getInstance().setCurrentModeInfo(new ModeInfo(result.getProbasDicts()));
+
+        //TermiteWifiManager.getInstance().setCurrentModeInfo(new ModeInfo(result.getProbasDicts()));
         TransportModeDetection.getInstance().setCurrentModeInfo(new ModeInfo(result.getProbasDicts()));
         Log.d(TAG, "Segment Evaluated!!" + result.getBestMode().getKey());
 

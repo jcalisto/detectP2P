@@ -30,4 +30,10 @@ public class CommandCliHandlerImpl implements CommandClientHandler{
 
         return null;
     }
+
+    @Override
+    public CliResponse handle(TestCommand c) {
+        Log.d("CommandHandler", "Got TestCommand: " + c.getMessage());
+        return null;
+    }
 }
