@@ -51,6 +51,7 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
             });
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+            Log.d(TAG, "Connection changed");
             // Respond to new connection or disconnections
             if (mManager == null) {
                 return;
@@ -59,6 +60,7 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
             if (networkInfo.isConnected()) {
                 // we are connected with the other device, request connection
                 // info to find group owner IP
+                //mManager.requestConnectionInfo(mChannel,  WifiDirectManager.getInstance());
                 mManager.requestConnectionInfo(mChannel,  WifiDirectManager.getInstance());
             } else {
                 // It's a disconnect

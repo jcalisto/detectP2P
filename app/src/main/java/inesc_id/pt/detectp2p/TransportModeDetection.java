@@ -3,12 +3,15 @@ package inesc_id.pt.detectp2p;
 import android.os.Handler;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import inesc_id.pt.detectp2p.ModeClassification.dataML.MLInputMetadata;
 import inesc_id.pt.detectp2p.P2PNetwork.DataModels.ModeInfo;
 import inesc_id.pt.detectp2p.P2PNetwork.DataModels.PeerInfo;
+import inesc_id.pt.detectp2p.ValidatedData.ValidatedDataManager;
+import inesc_id.pt.detectp2p.ValidatedData.ValidatedTrip;
 
 public class TransportModeDetection {
 
@@ -108,11 +111,36 @@ public class TransportModeDetection {
         return classifierModeInfo;
     }
 
+    //Take decision based on peer results
     private void takeDecision() {
         //TODO
         Log.d(TAG, "Taking decision");
 
+        //HashMap<Integer, Double> peerModesProbabilities = getDecisionFromPeerModes();
 
+        getDecisionFromValidatedData();
+
+    }
+
+    private void getDecisionFromValidatedData(){
+        Float[][] matrix = ValidatedDataManager.getInstance().getLocalValidationMatrix();
+
+        Log.d(TAG, "PRINTING VALIDATION MATRIX");
+        Log.d(TAG, "CAR_CLASSIFIER:_____________R_BIKE:" + matrix[9][1] + "___R_WALKING:" + matrix[9][7] + "___R_CAR:" +
+                matrix[9][9] + "___R_BUS:" + matrix[9][15] + "___R_TRAIN:" + matrix[9][10]);
+        Log.d(TAG, "WALKING_CLASSIFIER:_________R_BIKE:" + matrix[7][1] + "___R_WALKING:" + matrix[7][7] + "___R_CAR:" +
+                matrix[7][9] + "___R_BUS:" + matrix[7][15] + "___R_TRAIN:" + matrix[7][10]);
+        Log.d(TAG, "BICYCLE_CLASSIFIER:_________R_BIKE:" + matrix[1][1] + "___R_WALKING:" + matrix[1][7] + "___R_CAR:" +
+                matrix[1][9] + "___R_BUS:" + matrix[1][15] + "___R_TRAIN:" + matrix[1][10]);
+        Log.d(TAG, "BUS_CLASSIFIER:_____________R_BIKE:" + matrix[15][1] + "___R_WALKING:" + matrix[15][7] + "___R_CAR:" +
+                matrix[15][9] + "___R_BUS:" + matrix[15][15] + "___R_TRAIN:" + matrix[15][10]);
+        Log.d(TAG, "TRAIN_CLASSIFIER:___________R_BIKE:" + matrix[10][1] + "___R_WALKING:" + matrix[10][7] + "___R_CAR:" +
+                matrix[10][9] + "___R_BUS:" + matrix[10][15] + "___R_TRAIN:" + matrix[10][10]);
+
+
+    }
+
+    private HashMap<Integer, Double> getDecisionFromPeerModes(){
         int totalWeight = 0;
         HashMap<Integer, Double> totalProbabilityDict = new HashMap<>();
 
@@ -148,8 +176,7 @@ public class TransportModeDetection {
             Log.d(TAG, "Final probability for mode=" + modeKey + " is " + weightedProbability);
         }
 
-
-
+        return totalProbabilityDict;
     }
 
     private void sumValueToDictEntry(HashMap<Integer, Double> dict, Integer key, Double value){

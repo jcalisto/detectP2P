@@ -9,6 +9,7 @@ public class ModeInfo {
 
     private HashMap<Integer, Double> probasDicts;
     private List<KeyValueWrapper> probasOrdered;
+    private long realTimestamp;
 
     private int detectedMode;
 
@@ -38,6 +39,14 @@ public class ModeInfo {
 
     public void setDetectedMode(int detectedMode) {
         this.detectedMode = detectedMode;
+    }
+
+    public long getRealTimestamp() {
+        return realTimestamp;
+    }
+
+    public void setRealTimestamp(long realTimestamp) {
+        this.realTimestamp = realTimestamp;
     }
 
     public static ModeInfo getTestModeInfo(){

@@ -18,12 +18,22 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.peak.salut.Callbacks.SalutCallback;
+import com.peak.salut.Callbacks.SalutDataCallback;
+import com.peak.salut.Callbacks.SalutDeviceCallback;
+import com.peak.salut.Salut;
+import com.peak.salut.SalutDataReceiver;
+import com.peak.salut.SalutDevice;
+import com.peak.salut.SalutServiceData;
+
 import java.util.ArrayList;
 
 import inesc_id.pt.detectp2p.ModeClassification.ActivityRecognitionService;
 import inesc_id.pt.detectp2p.Adapters.LegValidationAdapter;
 import inesc_id.pt.detectp2p.Adapters.TripDigestListAdapter;
 import inesc_id.pt.detectp2p.ModeClassification.Classifier;
+import inesc_id.pt.detectp2p.P2PNetwork.MySalut;
+import inesc_id.pt.detectp2p.P2PNetwork.SalutManager;
 import inesc_id.pt.detectp2p.P2PNetwork.TermiteBroadcastReceiver;
 import inesc_id.pt.detectp2p.P2PNetwork.TermiteWifiManager;
 import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectBroadcastReceiver;
@@ -34,9 +44,10 @@ import inesc_id.pt.detectp2p.ModeClassification.TripStateMachine;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
 import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
 import inesc_id.pt.detectp2p.Taks.RequestToServerTask;
+import inesc_id.pt.detectp2p.TransportModeDetection;
 import inesc_id.pt.detectp2p.Utils.FileUtil;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SalutDataCallback {
 
     // CHOOSE WIFI DIRECT OR TERMITE MODE
     public static int MODE_TERMITE = 0;
@@ -45,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     // WIFI DIRECT MANAGER
     WifiDirectManager wifiDirectManager;
-
+    SalutManager salutManager;
 
     //Termite Objects
     ///////////////////////////
@@ -86,13 +97,15 @@ public class MainActivity extends AppCompatActivity {
         myService = new Intent(getApplicationContext(), ActivityRecognitionService.class);
         startService(myService);
 
+        salutManager = SalutManager.startSalutInstance(this);
 
         //INIT WIFI DIRECT OBJECTS
-        wifiDirectManager = WifiDirectManager.startInstance(this);
+        //wifiDirectManager = WifiDirectManager.startInstance(this);
 
         if(mode == MODE_TERMITE && !TermiteWifiManager.isRunning()) {
-            startWifiService();
+            //startWifiService();
         }
+
         persistentTripStorage = new PersistentTripStorage(getApplicationContext());
 
         tripDigestList = persistentTripStorage.getAllFullTripDigestsObjects();
@@ -125,19 +138,27 @@ public class MainActivity extends AppCompatActivity {
 
         btRequestServer = findViewById(R.id.btRequestServer);
         btRequestServer.setOnClickListener(buttonListener);
+
+        TransportModeDetection.getInstance();
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        wifiDirectManager.registerWifiReceiver();
+        //wifiDirectManager.registerWifiReceiver();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        wifiDirectManager.unregisterWifiReceiver();
+        //wifiDirectManager.unregisterWifiReceiver();
+        salutManager.stopService();
+    }
+
+    @Override
+    public void onDataReceived(Object data) {
+        Log.d("MainActivity", "Got DATA");
     }
 
     public void startWifiService(){
@@ -176,7 +197,8 @@ public class MainActivity extends AppCompatActivity {
                     FileUtil.startWriteToLog();
                     break;
                 case R.id.btConnectPeers:
-                    TermiteWifiManager.getInstance().sendUpdate("OLA");
+                    //TermiteWifiManager.getInstance().sendUpdate("OLA");
+                    salutManager.sendMessage();
                     break;
                 case R.id.btTest:
                     FileUtil.copyAssets(getApplicationContext());
@@ -186,7 +208,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("FileUtil", "HASH=" + c.hashCode());
                     break;
                 case R.id.btRequestServer:
-                    new RequestToServerTask().execute("9090");
+                    //new RequestToServerTask().execute("9090");
+                    salutManager.discoverAndRegisterToPeers();
                     break;
 
             }
@@ -218,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
         final ListView legList = mView.findViewById(R.id.legList);
         final Button doneBt = mView.findViewById(R.id.doneBt);
 
-        LegValidationAdapter adapter = new LegValidationAdapter(fullTrip, getApplicationContext());
+        LegValidationAdapter adapter = new LegValidationAdapter(fullTrip, this);
 
         legList.setAdapter(adapter);
 
@@ -232,5 +255,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
+
+
 
 }

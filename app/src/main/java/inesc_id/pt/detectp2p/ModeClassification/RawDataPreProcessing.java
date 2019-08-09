@@ -419,7 +419,7 @@ public class RawDataPreProcessing {
     }
 
 
-    private static ProcessedAccelerations processAccelerations(ArrayList<Double> accelerationData, double sumAccels){
+    public static ProcessedAccelerations processAccelerations(ArrayList<Double> accelerationData, double sumAccels){
 
         ProcessedAccelerations processedAccelerations = new ProcessedAccelerations();
 

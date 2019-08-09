@@ -2,6 +2,16 @@ package inesc_id.pt.detectp2p.Utils;
 
 public class TransportInfo {
 
+    public static int getModeCodeFromString(String mode){
+        for(int i = 0; i<codes.modalities.length;i++){
+            String m = codes.modalities[i];
+            if(m.equals(mode)){
+                return i;
+            }
+        }
+        return 9;   //Default car
+    }
+
     public interface codes {
 
         String[] modalities = {"vehicle","bicycle","onfoot",
@@ -13,6 +23,9 @@ public class TransportInfo {
                 "taxi", "rideHailing", "carSharing", "carpooling",
                 "busLongDistance", "highSpeedTrain", "other", "otherPublic",
                 "otherActive", "otherPrivate", "intercity", "wheelChair", "cargoBike", "carSharingPassenger", "electricWheelchair" };
+
+        String[] correctedModalities = {"default", "walking", "bicycle", "car", "train", "tram", "bus", "motorcycle", "subway"};
+
 
 
         int vehicle = 0;

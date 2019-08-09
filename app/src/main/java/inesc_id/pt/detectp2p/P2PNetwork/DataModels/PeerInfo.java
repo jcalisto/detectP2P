@@ -54,6 +54,7 @@ public class PeerInfo {
     public void  addModeInfo(ModeInfo modeInfo){
         increaseTimer();
         lastTimeStamp = System.currentTimeMillis();
+        modeInfo.setRealTimestamp(System.currentTimeMillis());
         if(modeInfoByTime.containsKey(time)){
             addModeInfo(modeInfo);
         }

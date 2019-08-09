@@ -487,6 +487,7 @@ public class RawDataDetection {
 
             Trip trip = new Trip(locations, accelerations, firstTsLeg, lastTs, identifiedLegs.get(0).getMode(),
                     speedDistanceWrapper.getAvgSpeed(), speedDistanceWrapper.getMaxSpeed(), speedDistanceWrapper.getDistance());
+            trip.setProbasDict(outputsMetadata.get(identifiedLegs.get(0).getFirstIndex()).getProbasDicts());
 
             result.add(trip);
 
@@ -549,6 +550,7 @@ public class RawDataDetection {
 
 
             Trip trip = new Trip(filteredLocations, filteredAccelerations, firstTsLeg, lastTs, current.getMode(), speedDistanceWrapper.getAvgSpeed(), speedDistanceWrapper.getMaxSpeed(), speedDistanceWrapper.getDistance());
+            trip.setProbasDict(outputsMetadata.get(i-1).getProbasDicts());
             result.add(trip);
         }
 
@@ -570,6 +572,7 @@ public class RawDataDetection {
             SpeedDistanceWrapper speedDistanceWrapper = computeSpeedsDistance(filteredLocations);
 
             Trip trip = new Trip(filteredLocations, filteredAccelerations, firstTsLeg, lastTs, current.getMode(), speedDistanceWrapper.getAvgSpeed(), speedDistanceWrapper.getMaxSpeed(), speedDistanceWrapper.getDistance());
+            trip.setProbasDict(outputsMetadata.get(identifiedLegs.size()-1).getProbasDicts());
             result.add(trip);
         }
 

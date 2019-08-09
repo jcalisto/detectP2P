@@ -12,6 +12,7 @@ import android.net.wifi.p2p.WifiP2pManager.*;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class WifiDirectManager implements ConnectionInfoListener {
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        myName = UUID.randomUUID().toString();
+        myName = Settings.Secure.getString(activity.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         startRegistrationAndDiscovery();
 

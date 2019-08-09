@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">detectP2P</string>
+
+    <string-array name="modes_array">
+        <item>select</item>
+        <item>walking</item>
+        <item>bicycle</item>
+        <item>car</item>
+        <item>train</item>
+        <item>tram</item>
+        <item>bus</item>
+        <item>motorcycle</item>
+        <item>subway</item>
+    </string-array>
 </resources>

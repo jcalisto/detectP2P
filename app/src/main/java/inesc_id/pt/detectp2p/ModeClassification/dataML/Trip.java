@@ -4,8 +4,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.nio.DoubleBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import inesc_id.pt.detectp2p.ModeClassification.DataModels.AccelerationData;
 import inesc_id.pt.detectp2p.ModeClassification.DataModels.ActivityDataContainer;
@@ -87,6 +89,9 @@ public class Trip extends FullTripPart implements Serializable{
     @Expose
     private String otherMotText;
 
+    @Expose
+    private HashMap<Integer, Double> probasDict;
+
     public Trip(ArrayList<LocationDataContainer> locationDataContainers, ArrayList<ActivityDataContainer> activityDataContainers,
                 int modality, long initTimestamp, long endTimestamp, long distanceTraveled, long timeTraveled, float averageSpeed, float maxSpeed,
                 double accelerationAverage, ArrayList<AccelerationData> accelerationData,
@@ -140,10 +145,11 @@ public class Trip extends FullTripPart implements Serializable{
         super(locationDataContainers, initTimestamp, endTimestamp);
     }
 
+
     public Trip(ArrayList<LocationDataContainer> locationDataContainers, ArrayList<AccelerationData> accelerationData,
                 long initTimestamp, long endTimestamp, int identifiedModality,
                 float averageSpeed, float maxSpeed, long distance
-                ){
+    ){
 
         super(locationDataContainers, initTimestamp, endTimestamp);
 
@@ -181,6 +187,11 @@ public class Trip extends FullTripPart implements Serializable{
 
     public void setEndTimestamp(long endTimestamp) {
         this.endTimestamp = endTimestamp;
+    }
+
+    public void setProbasDict(HashMap<Integer, Double> probasDict){ this.probasDict = probasDict;}
+    public HashMap<Integer, Double> getProbasDict(){
+        return probasDict;
     }
 
     @Override
