@@ -1,33 +1,29 @@
 package inesc_id.pt.detectp2p.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.media.Image;
-import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import inesc_id.pt.detectp2p.Activities.EvaluatedTripActivity;
-import inesc_id.pt.detectp2p.Activities.MainActivity;
+import inesc_id.pt.detectp2p.Activities.HomeActivity;
 import inesc_id.pt.detectp2p.R;
-import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
-import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripPart;
-import inesc_id.pt.detectp2p.ModeClassification.dataML.Trip;
+import inesc_id.pt.detectp2p.TripDetection.dataML.FullTrip;
+import inesc_id.pt.detectp2p.TripDetection.dataML.FullTripPart;
+import inesc_id.pt.detectp2p.TripDetection.dataML.Trip;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
 import inesc_id.pt.detectp2p.Utils.TransportInfo;
-import inesc_id.pt.detectp2p.ValidatedData.ValidatedDataManager;
+import inesc_id.pt.detectp2p.TripValidationManager.ValidatedDataManager;
 
 
 public class LegValidationAdapter extends BaseAdapter {
@@ -44,15 +40,17 @@ public class LegValidationAdapter extends BaseAdapter {
     private FullTrip fullTripToBeValidated;
     private Context context;
     private ArrayList<FullTripPart> tripPartList;
+    private Activity activity;
 
     FullTripPart itemBeingChanged;
 
     private boolean initiatingSpinner = true;
 
-    public LegValidationAdapter(FullTrip fullTripToBeValidated, Context context) {
+    public LegValidationAdapter(FullTrip fullTripToBeValidated, Context context, Activity activity) {
         this.fullTripToBeValidated = fullTripToBeValidated;
         this.tripPartList = fullTripToBeValidated.getTripList();
         this.context = context;
+        this.activity = activity;
 
         Log.d("LegValidationAdapter", "Trip part count = " + fullTripToBeValidated.getTripList().size());
     }
@@ -105,7 +103,13 @@ public class LegValidationAdapter extends BaseAdapter {
 
         mViewHolder.tvStartTS.setText(DateHelper.getHoursMinutesFromTSString(trip.getInitTimestamp()));
         mViewHolder.tvMode.setText(TransportInfo.codes.modalities[trip.getSugestedModeOfTransport()]);
-        mViewHolder.tvDuration.setText(Long.toString(trip.getTimeTraveled()));
+
+        Long durationLong = (trip.getEndTimestamp() - trip.getInitTimestamp()) / 60000;
+        BigDecimal bd = new BigDecimal(durationLong + 1);
+        BigDecimal rounded = bd.setScale(1, BigDecimal.ROUND_CEILING);
+        String duration =  String.valueOf(rounded.longValue());
+
+        mViewHolder.tvDuration.setText(duration);
         mViewHolder.imageView.setColorFilter(Color.GRAY);
 
 
@@ -123,11 +127,9 @@ public class LegValidationAdapter extends BaseAdapter {
         @Override
         public void onClick(View view) {
 
-            Intent intent = new Intent(context, EvaluatedTripActivity.class);
             int tripIndex = (int) view.getTag();
             Trip trip = (Trip) fullTripToBeValidated.getTripList().get(tripIndex);
-            intent.putExtra("TRIP", trip);
-            context.startActivity(intent);
+            ((HomeActivity) activity).openLeg(trip);
 
         }
     };

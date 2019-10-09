@@ -9,9 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import inesc_id.pt.detectp2p.R;
-import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
+import inesc_id.pt.detectp2p.TripDetection.dataML.FullTripDigest;
 import inesc_id.pt.detectp2p.Utils.DateHelper;
 import inesc_id.pt.detectp2p.Utils.LocationUtils;
 
@@ -74,17 +75,8 @@ public class TripDigestListAdapter extends BaseAdapter {
         }
 
         // GET START/END ADDRESSES / LOCATION
-        if (data.getStartAddress() != null){
-            mViewHolder.tvStartAddr.setText(data.getStartAddress());
-        }else{
-            mViewHolder.tvStartAddr.setText(LocationUtils.getTextLatLng(data.getStartLocation()));
-        }
-
-        if (data.getFinalAddress() != null){
-            mViewHolder.tvEndAddr.setText(data.getFinalAddress());
-        }else{
-            mViewHolder.tvEndAddr.setText(LocationUtils.getTextLatLng(data.getFinalLocation()));
-        }
+        mViewHolder.tvStartAddr.setText(DateHelper.getYearMonthDayFromTSString(data.getInitTimestamp()));
+        mViewHolder.tvEndAddr.setText(DateHelper.getYearMonthDayFromTSString(data.getEndTimestamp()));
 
         mViewHolder.tvStartTS.setText(DateHelper.getHoursMinutesFromTSString(data.getInitTimestamp()));
         mViewHolder.tvEndTS.setText(DateHelper.getHoursMinutesFromTSString(data.getEndTimestamp()));

@@ -3,8 +3,8 @@ package inesc_id.pt.detectp2p.Utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import inesc_id.pt.detectp2p.ModeClassification.DataModels.AccelerationData;
-import inesc_id.pt.detectp2p.ModeClassification.dataML.LocationDataContainer;
+import inesc_id.pt.detectp2p.TripDetection.DataModels.AccelerationData;
+import inesc_id.pt.detectp2p.TripDetection.dataML.LocationDataContainer;
 
 /**
  * Created by admin on 1/5/18.

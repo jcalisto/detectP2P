@@ -5,25 +5,18 @@ import android.content.res.AssetManager;
 import android.os.Environment;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import inesc_id.pt.detectp2p.ModeClassification.Classifier;
-import inesc_id.pt.detectp2p.ModeClassification.RawDataPreProcessing;
+import inesc_id.pt.detectp2p.TripDetection.Classifier;
 
 public class FileUtil {
 

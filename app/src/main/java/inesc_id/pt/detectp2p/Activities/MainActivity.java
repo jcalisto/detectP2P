@@ -1,16 +1,15 @@
 package inesc_id.pt.detectp2p.Activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.WifiP2pManager.*;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,45 +17,48 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.peak.salut.Callbacks.SalutCallback;
 import com.peak.salut.Callbacks.SalutDataCallback;
-import com.peak.salut.Callbacks.SalutDeviceCallback;
-import com.peak.salut.Salut;
-import com.peak.salut.SalutDataReceiver;
-import com.peak.salut.SalutDevice;
-import com.peak.salut.SalutServiceData;
+import com.ramimartin.multibluetooth.activity.BluetoothActivity;
+import com.ramimartin.multibluetooth.bluetooth.manager.BluetoothManager;
+
 
 import java.util.ArrayList;
+import java.util.Random;
 
-import inesc_id.pt.detectp2p.ModeClassification.ActivityRecognitionService;
+import inesc_id.pt.detectp2p.Adapters.PeerListAdapter;
+import inesc_id.pt.detectp2p.TransportModeDeterminer;
+import inesc_id.pt.detectp2p.TripDetection.ActivityRecognitionService;
 import inesc_id.pt.detectp2p.Adapters.LegValidationAdapter;
 import inesc_id.pt.detectp2p.Adapters.TripDigestListAdapter;
-import inesc_id.pt.detectp2p.ModeClassification.Classifier;
-import inesc_id.pt.detectp2p.P2PNetwork.MySalut;
-import inesc_id.pt.detectp2p.P2PNetwork.SalutManager;
-import inesc_id.pt.detectp2p.P2PNetwork.TermiteBroadcastReceiver;
-import inesc_id.pt.detectp2p.P2PNetwork.TermiteWifiManager;
-import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectBroadcastReceiver;
-import inesc_id.pt.detectp2p.P2PNetwork.WifiDirectManager;
+import inesc_id.pt.detectp2p.TripDetection.Classifier;
+import inesc_id.pt.detectp2p.P2PManager.Bluetooth.BluetoothPeer;
+import inesc_id.pt.detectp2p.P2PManager.SalutManager;
+import inesc_id.pt.detectp2p.P2PManager.TermiteBroadcastReceiver;
+import inesc_id.pt.detectp2p.P2PManager.TermiteWifiManager;
+import inesc_id.pt.detectp2p.P2PManager.WifiDirectManager;
 import inesc_id.pt.detectp2p.R;
-import inesc_id.pt.detectp2p.ModeClassification.PersistentTripStorage;
-import inesc_id.pt.detectp2p.ModeClassification.TripStateMachine;
-import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTrip;
-import inesc_id.pt.detectp2p.ModeClassification.dataML.FullTripDigest;
-import inesc_id.pt.detectp2p.Taks.RequestToServerTask;
-import inesc_id.pt.detectp2p.TransportModeDetection;
+import inesc_id.pt.detectp2p.TripDetection.PersistentTripStorage;
+import inesc_id.pt.detectp2p.TripDetection.TripStateMachine;
+import inesc_id.pt.detectp2p.TripDetection.dataML.FullTrip;
+import inesc_id.pt.detectp2p.TripDetection.dataML.FullTripDigest;
 import inesc_id.pt.detectp2p.Utils.FileUtil;
 
-public class MainActivity extends AppCompatActivity implements SalutDataCallback {
+public class MainActivity extends BluetoothActivity implements SalutDataCallback {
 
     // CHOOSE WIFI DIRECT OR TERMITE MODE
     public static int MODE_TERMITE = 0;
     public static int MODE_WIFIDIRECT = 1;
     int mode = MODE_WIFIDIRECT;
 
+    int myID = 0;
+
+
     // WIFI DIRECT MANAGER
     WifiDirectManager wifiDirectManager;
     SalutManager salutManager;
+
+
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     //Termite Objects
     ///////////////////////////
@@ -81,11 +83,14 @@ public class MainActivity extends AppCompatActivity implements SalutDataCallback
     private PersistentTripStorage persistentTripStorage;
     private ArrayList<FullTripDigest> tripDigestList = new ArrayList<>();
     private TripDigestListAdapter tripDigestAdapter;
+
+    private ArrayList<BluetoothPeer> peerList = new ArrayList<>();
     ///////////////////////////
 
     public MainActivity() {
         super();
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +102,28 @@ public class MainActivity extends AppCompatActivity implements SalutDataCallback
         myService = new Intent(getApplicationContext(), ActivityRecognitionService.class);
         startService(myService);
 
-        salutManager = SalutManager.startSalutInstance(this);
+        //salutManager = SalutManager.startSalutInstance(this);
+
+        //BLUETOOTH
+        Random r = new Random();
+        myID = r.nextInt(2000 - 1) + 1;
+
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+            permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+            }
+        }
+
+        setTimeDiscoverable(BluetoothManager.BLUETOOTH_TIME_DICOVERY_3600_SEC);
+        selectServerMode();
+        BluetoothAdapter.getDefaultAdapter().setName("detectP2P_" + myID);
+
+
+        scanAllBluetoothDevice();
+
 
         //INIT WIFI DIRECT OBJECTS
         //wifiDirectManager = WifiDirectManager.startInstance(this);
@@ -120,26 +146,9 @@ public class MainActivity extends AppCompatActivity implements SalutDataCallback
 
         tripList.setOnItemClickListener(itemClickListener);
 
-        btStartStop = findViewById(R.id.btStartStop);
 
-        btStartStop.setOnClickListener(buttonListener);
 
-        btLog = findViewById(R.id.btLog);
-        btLog.setOnClickListener(buttonListener);
-
-        btConnectPeers = findViewById(R.id.btConnectPeers);
-        btConnectPeers.setOnClickListener(buttonListener);
-
-        btTest = findViewById(R.id.btTest);
-        btTest.setOnClickListener(buttonListener);
-
-        btTestRead = findViewById(R.id.btTestRead);
-        btTestRead.setOnClickListener(buttonListener);
-
-        btRequestServer = findViewById(R.id.btRequestServer);
-        btRequestServer.setOnClickListener(buttonListener);
-
-        TransportModeDetection.getInstance();
+        TransportModeDeterminer.getInstance();
     }
 
 
@@ -153,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements SalutDataCallback
     public void onPause() {
         super.onPause();
         //wifiDirectManager.unregisterWifiReceiver();
-        salutManager.stopService();
+        //salutManager.stopService();
     }
 
     @Override
@@ -177,42 +186,6 @@ public class MainActivity extends AppCompatActivity implements SalutDataCallback
         public void onClick(View view) {
             //TermiteWifiManager.getInstance().sendUpdate("HELLO PEER ");
 
-            switch (view.getId()){
-                case R.id.btStartStop:
-                    Log.d("Main Activity", "Force Trip Start/Stop with current state=" + TripStateMachine.getInstance(getApplicationContext(), false, true).currentState);
-                    if(TripStateMachine.getInstance(getApplicationContext(), false, true).currentState == TripStateMachine.state.still){
-                        TripStateMachine.getInstance(getApplicationContext(), false, true).forceStartTrip();
-                        btStartStop.setText("STOP TRIP");
-                    }else{
-                        TripStateMachine.getInstance(getApplicationContext(), false, true).forceFinishTrip(false);
-                        btStartStop.setText("START TRIP");
-                    }
-                    break;
-                case R.id.btRedraw:
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
-                    break;
-                case R.id.btLog:
-                    FileUtil.startWriteToLog();
-                    break;
-                case R.id.btConnectPeers:
-                    //TermiteWifiManager.getInstance().sendUpdate("OLA");
-                    salutManager.sendMessage();
-                    break;
-                case R.id.btTest:
-                    FileUtil.copyAssets(getApplicationContext());
-                    break;
-                case R.id.btTestRead:
-                    Classifier c = FileUtil.readClassifier(getApplicationContext(), "classifier1");
-                    Log.d("FileUtil", "HASH=" + c.hashCode());
-                    break;
-                case R.id.btRequestServer:
-                    //new RequestToServerTask().execute("9090");
-                    salutManager.discoverAndRegisterToPeers();
-                    break;
-
-            }
         }
     };
 
@@ -241,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements SalutDataCallback
         final ListView legList = mView.findViewById(R.id.legList);
         final Button doneBt = mView.findViewById(R.id.doneBt);
 
-        LegValidationAdapter adapter = new LegValidationAdapter(fullTrip, this);
+        LegValidationAdapter adapter = new LegValidationAdapter(fullTrip, this, this);
 
         legList.setAdapter(adapter);
 
@@ -256,6 +229,135 @@ public class MainActivity extends AppCompatActivity implements SalutDataCallback
         dialog.show();
     }
 
+    public void showPeerListPopup() {
+
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        View mView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.peer_listing, null);
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+
+        final ListView peerListView = mView.findViewById(R.id.legList);
+        final Button doneBt = mView.findViewById(R.id.doneBt);
+
+        final Button updateBt = mView.findViewById(R.id.updateBt);
+
+        final PeerListAdapter adapter = new PeerListAdapter(peerList, this);
+
+        peerListView.setAdapter(adapter);
+
+        doneBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        updateBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scanAllBluetoothDevice();
+                BluetoothAdapter.getDefaultAdapter().startDiscovery();
+            }
+        });
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+
+    public void newPeer(BluetoothDevice device){
+        for(BluetoothPeer peer : peerList){
+            if(peer.device.getAddress() == device.getAddress()){
+                return;
+            }
+        }
+        peerList.add(new BluetoothPeer(device, "NOT CONNECTED", System.currentTimeMillis()));
+    }
 
 
+    ///////////////////////////////////////// BLUETOOTH //////////////////////////////////////////
+
+    @Override
+    public String setUUIDappIdentifier() {
+        return "f520cf2c-6487-11e7-907b";
+    }
+
+    @Override
+    public int myNbrClientMax() {
+        return 7;
+    }
+
+
+    @Override
+    public void onBluetoothDeviceFound(BluetoothDevice bluetoothDevice) {
+        String otherName = bluetoothDevice.getName();
+        Log.d("BluetoothManager", "device found with Name=" + otherName + ",   Addr:" + bluetoothDevice.getAddress());
+
+        newPeer(bluetoothDevice);
+
+        if(otherName == null || !otherName.contains("detectP2P")) return;
+        int otherID = Integer.parseInt(otherName.split("_")[1]);
+        Log.d("BluetoothManager", "device found with ID=" + otherID);
+
+        if(otherID > myID){ //Other device is server
+            createClient(bluetoothDevice.getAddress());
+        }
+        else {              //This device is server
+            //selectServerMode();
+        }
+
+    }
+
+    @Override
+    public void onClientConnectionSuccess() {
+        Log.d("BluetoothManager", "Connected to device");
+    }
+
+    @Override
+    public void onClientConnectionFail() {
+        Log.d("BluetoothManager", "Connection failed");
+    }
+
+    @Override
+    public void onServeurConnectionSuccess() {
+        Log.d("BluetoothManager", "Connected to server");
+    }
+
+    @Override
+    public void onServeurConnectionFail() {
+        Log.d("BluetoothManager", "Failed to connect to server");
+    }
+
+    @Override
+    public void onBluetoothStartDiscovery() {
+        Log.d("BluetoothManager", "START DISCOVERY");
+    }
+
+    @Override
+    public void onBluetoothMsgStringReceived(String s) {
+
+    }
+
+    @Override
+    public void onBluetoothMsgObjectReceived(Object o) {
+
+    }
+
+    @Override
+    public void onBluetoothMsgBytesReceived(byte[] bytes) {
+
+    }
+
+    @Override
+    public void onBluetoothNotAviable() {
+        Log.d("BluetoothManager", "NOT AVAILABLE");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_COARSE_LOCATION: {
+                // TODO stuff if you need
+            }
+        }
+    }
 }

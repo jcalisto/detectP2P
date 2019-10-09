@@ -3,8 +3,7 @@ package inesc_id.pt.detectp2p.Command;
 import android.util.Log;
 
 import inesc_id.pt.detectp2p.Response.CliResponse;
-import inesc_id.pt.detectp2p.TransportModeDetection;
-import inesc_id.pt.detectp2p.Utils.FileUtil;
+import inesc_id.pt.detectp2p.TransportModeDeterminer;
 
 public class CommandCliHandlerImpl implements CommandClientHandler{
 
@@ -24,7 +23,7 @@ public class CommandCliHandlerImpl implements CommandClientHandler{
     public CliResponse handle(ClassificationUpdate c) {
         Log.d("CommandHandler", "Opening Classification Update Prediction");
 
-        TransportModeDetection.getInstance().updateStoredPeerInformation(c.senderID, c.modeKey, c.probabilityDict);
+        TransportModeDeterminer.getInstance().updateStoredPeerInformation(c.senderID, c.modeKey, c.probabilityDict);
 
         Log.d("CommandHandler", "Dispatched update from peer to inner structure");
 

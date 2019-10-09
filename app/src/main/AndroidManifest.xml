@@ -12,8 +12,14 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
     <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature android:name="android.hardware.bluetooth" android:required="true" />
+
+    <permission android:name="android.permission.BLUETOOTH" android:label="BLUETOOTH" />
+    <permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -23,8 +29,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name=".Activities.EvaluatedTripActivity"></activity>
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.MainActivity"></activity>
+        <activity android:name=".Activities.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,9 +39,9 @@
         </activity>
 
         <service android:name="pt.inesc.termite.wifidirect.service.SimWifiP2pService" />
-        <service android:name=".ModeClassification.ActivityRecognitionService" />
+        <service android:name=".TripDetection.ActivityRecognitionService" />
         <service
-            android:name=".P2PNetwork.TermiteWifiManager"
+            android:name=".P2PManager.TermiteWifiManager"
             android:enabled="true"
             android:exported="false" />
     </application>
